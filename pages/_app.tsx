@@ -9,11 +9,13 @@ import '@/styles/globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
-function App({ Component, pageProps }: AppProps<{}>) {
+interface CustomPageProps {
+}
+
+function App({ Component, pageProps }: AppProps<CustomPageProps>) {
   const queryClient = new QueryClient();
 
-  // @ts-ignore
-    return (
+  return (
     <div className={inter.className}>
       <Toaster />
       <QueryClientProvider client={queryClient}>
