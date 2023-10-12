@@ -26,7 +26,13 @@ yarn dev
 ```
 
 ## Deployment
-Fork the project on GitHub and deploy using GitHub Pages.
+Fork the project on GitHub
+
+deploy using GitHub Pages with GitHub Actions
+![GitHubPages.png](/public/GitHubPages.png)
+
+chose this action and commit it
+![NextjsAction.png](/public/NextjsAction.png)
 
 ## Features
 * Allows customizing request URLs
