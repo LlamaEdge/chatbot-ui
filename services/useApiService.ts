@@ -26,8 +26,7 @@ const useApiService = () => {
     // 	[fetchService]
     // );
 
-    const getModels = useCallback(
-        async (params: GetModelsRequestProps, signal?: AbortSignal) => {
+    const getModels = async (params: GetModelsRequestProps, signal?: AbortSignal) => {
             let url = `${params.url}/v1/models`;
             const response = await fetch(url, {
                 headers: {
@@ -41,9 +40,7 @@ const useApiService = () => {
             }catch (e) {
                 return {}
             }
-        },
-        [fetchService],
-    );
+        }
 
     return {
         getModels,
