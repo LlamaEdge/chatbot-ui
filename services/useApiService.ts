@@ -8,7 +8,6 @@ export interface GetModelsRequestProps {
 }
 
 const useApiService = () => {
-    const fetchService = useFetch();
 
     // const getModels = useCallback(
     // 	(
@@ -26,7 +25,7 @@ const useApiService = () => {
     // 	[fetchService]
     // );
 
-    const getModels = async (params: GetModelsRequestProps, signal?: AbortSignal) => {
+    const getModels = async (params: GetModelsRequestProps) => {
             let url = `${params.url}/v1/models`;
             const response = await fetch(url, {
                 headers: {
@@ -36,6 +35,7 @@ const useApiService = () => {
             });
             try {
                 const data = await response.json()
+                console.log(data.data)
                 return data.data
             }catch (e) {
                 return {}
