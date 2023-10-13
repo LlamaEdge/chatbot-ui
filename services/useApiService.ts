@@ -1,46 +1,53 @@
-import { useCallback } from 'react';
+import {useCallback} from 'react';
 
-import { useFetch } from '@/hooks/useFetch';
+import {useFetch} from '@/hooks/useFetch';
 
 export interface GetModelsRequestProps {
-  key: string;
+    url: string;
+    key: string;
 }
 
 const useApiService = () => {
-  const fetchService = useFetch();
+    const fetchService = useFetch();
 
-  // const getModels = useCallback(
-  // 	(
-  // 		params: GetManagementRoutineInstanceDetailedParams,
-  // 		signal?: AbortSignal
-  // 	) => {
-  // 		return fetchService.get<GetManagementRoutineInstanceDetailed>(
-  // 			`/v1/ManagementRoutines/${params.managementRoutineId}/instances/${params.instanceId
-  // 			}?sensorGroupIds=${params.sensorGroupId ?? ''}`,
-  // 			{
-  // 				signal,
-  // 			}
-  // 		);
-  // 	},
-  // 	[fetchService]
-  // );
+    // const getModels = useCallback(
+    // 	(
+    // 		params: GetManagementRoutineInstanceDetailedParams,
+    // 		signal?: AbortSignal
+    // 	) => {
+    // 		return fetchService.get<GetManagementRoutineInstanceDetailed>(
+    // 			`/v1/ManagementRoutines/${params.managementRoutineId}/instances/${params.instanceId
+    // 			}?sensorGroupIds=${params.sensorGroupId ?? ''}`,
+    // 			{
+    // 				signal,
+    // 			}
+    // 		);
+    // 	},
+    // 	[fetchService]
+    // );
 
-  const getModels = useCallback(
-    (params: GetModelsRequestProps, signal?: AbortSignal) => {
-      return fetchService.post<GetModelsRequestProps>(`/api/models`, {
-        body: { key: params.key },
-        headers: {
-          'Content-Type': 'application/json',
+    const getModels = useCallback(
+        async (params: GetModelsRequestProps, signal?: AbortSignal) => {
+            let url = `${params.url}/v1/models`;
+            const response = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${params.key ? params.key : process.env.OPENAI_API_KEY}`
+                },
+            });
+            try {
+                const data = await response.json()
+                return data.data
+            }catch (e) {
+                return {}
+            }
         },
-        signal,
-      });
-    },
-    [fetchService],
-  );
+        [fetchService],
+    );
 
-  return {
-    getModels,
-  };
+    return {
+        getModels,
+    };
 };
 
 export default useApiService;

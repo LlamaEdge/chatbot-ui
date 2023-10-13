@@ -11,8 +11,11 @@ import {Plugin} from '@/types/plugin';
 import HomeContext from '@/pages/api/home/home.context';
 import {ChatInput} from './ChatInput';
 import {ChatLoader} from './ChatLoader';
+import Spinner from '../Spinner';
 import {ErrorMessageDiv} from './ErrorMessageDiv';
 import {ModelSelect} from './ModelSelect';
+import { SystemPrompt } from './SystemPrompt';
+import { TemperatureSlider } from './Temperature';
 import {MemoizedChatMessage} from './MemoizedChatMessage';
 import {DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE} from "@/utils/app/const";
 import {OpenAIError, OpenAIStream} from "@/utils/server";
@@ -127,7 +130,6 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                         // encoding.free();
 
                         response = await OpenAIStream(model, promptToSend, temperatureToUse, api, key, messagesToSend);
-                        console.log(response)
                     } catch (error) {
                         console.error(error);
                         if (error instanceof OpenAIError) {
@@ -151,7 +153,6 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                         field: 'selectedConversation',
                         value: updateConversation,
                     });
-                    console.log(updatedConversation)
                     const updatedConversations: Conversation[] = conversations.map(
                         (conversation) => {
                             if (conversation.id === selectedConversation.id) {
@@ -163,7 +164,6 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                     if (updatedConversations.length === 0) {
                         updatedConversations.push(updatedConversation);
                     }
-                    console.log(updatedConversation)
                     saveConversations(updatedConversations);
                     homeDispatch({field: 'loading', value: false});
                     homeDispatch({field: 'messageIsStreaming', value: false});
@@ -237,7 +237,6 @@ const scrollDown = () => {
 const throttledScrollDown = throttle(scrollDown, 250);
 
 // useEffect(() => {
-//   console.log('currentMessage', currentMessage);
 //   if (currentMessage) {
 //     handleSend(currentMessage);
 //     homeDispatch({ field: 'currentMessage', value: undefined });
@@ -275,10 +274,6 @@ useEffect(() => {
         }
     };
 }, [messagesEndRef]);
-
-useEffect(()=>{
-    console.log(selectedConversation)
-},[selectedConversation])
 
 return (
     <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#343541]">
@@ -333,56 +328,56 @@ return (
                         <>
                             <div
                                 className="mx-auto flex flex-col space-y-5 md:space-y-10 px-3 pt-5 md:pt-12 sm:max-w-[600px]">
-                                {/*<div className="text-center text-3xl font-semibold text-gray-800 dark:text-gray-100">*/}
-                                {/*  {models.length === 0 ? (*/}
-                                {/*    <div>*/}
-                                {/*      <Spinner size="16px" className="mx-auto" />*/}
-                                {/*    </div>*/}
-                                {/*  ) : (*/}
-                                {/*    'Chatbot UI'*/}
-                                {/*  )}*/}
-                                {/*</div>*/}
+                                <div className="text-center text-3xl font-semibold text-gray-800 dark:text-gray-100">
+                                  {models.length === 0 ? (
+                                    <div>
+                                      <Spinner size="16px" className="mx-auto" />
+                                    </div>
+                                  ) : (
+                                    'Chatbot UI'
+                                  )}
+                                </div>
 
-                                {/*{models.length > 0 && (*/}
-                                {/*  <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">*/}
-                                {/*    <ModelSelect />*/}
+                                {models.length > 0 && (
+                                  <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">
+                                    <ModelSelect />
 
-                                {/*    <SystemPrompt*/}
-                                {/*      conversation={selectedConversation}*/}
-                                {/*      prompts={prompts}*/}
-                                {/*      onChangePrompt={(prompt) =>*/}
-                                {/*        handleUpdateConversation(selectedConversation, {*/}
-                                {/*          key: 'prompt',*/}
-                                {/*          value: prompt,*/}
-                                {/*        })*/}
-                                {/*      }*/}
-                                {/*    />*/}
+                                    <SystemPrompt
+                                      conversation={selectedConversation}
+                                      prompts={prompts}
+                                      onChangePrompt={(prompt) =>
+                                        handleUpdateConversation(selectedConversation, {
+                                          key: 'prompt',
+                                          value: prompt,
+                                        })
+                                      }
+                                    />
 
-                                {/*    <TemperatureSlider*/}
-                                {/*      label={t('Temperature')}*/}
-                                {/*      onChangeTemperature={(temperature) =>*/}
-                                {/*        handleUpdateConversation(selectedConversation, {*/}
-                                {/*          key: 'temperature',*/}
-                                {/*          value: temperature,*/}
-                                {/*        })*/}
-                                {/*      }*/}
-                                {/*    />*/}
-                                {/*  </div>*/}
-                                {/*)}*/}
+                                    {/*<TemperatureSlider*/}
+                                    {/*  label={t('Temperature')}*/}
+                                    {/*  onChangeTemperature={(temperature) =>*/}
+                                    {/*    handleUpdateConversation(selectedConversation, {*/}
+                                    {/*      key: 'temperature',*/}
+                                    {/*      value: temperature,*/}
+                                    {/*    })*/}
+                                    {/*  }*/}
+                                    {/*/>*/}
+                                  </div>
+                                )}
                             </div>
                         </>
                     ) : (
                         <>
                             <div
                                 className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#444654] dark:text-neutral-200">
-                                {/*{t('Model')}: {selectedConversation?.model?.name} | {t('Temp')}*/}
-                                {/*: {selectedConversation?.temperature} |*/}
-                                {/*<button*/}
-                                {/*    className="ml-2 cursor-pointer hover:opacity-50"*/}
-                                {/*    onClick={handleSettings}*/}
-                                {/*>*/}
-                                {/*    <IconSettings size={18}/>*/}
-                                {/*</button>*/}
+                                {t('Model')}: {selectedConversation?.model?.name} | {t('Temp')}
+                                : {selectedConversation?.temperature} |
+                                <button
+                                    className="ml-2 cursor-pointer hover:opacity-50"
+                                    onClick={handleSettings}
+                                >
+                                    <IconSettings size={18}/>
+                                </button>
                                 <button
                                     className="ml-2 cursor-pointer hover:opacity-50"
                                     onClick={onClearAll}
