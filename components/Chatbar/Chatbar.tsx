@@ -4,7 +4,7 @@ import { useTranslation } from 'next-i18next';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
-import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/utils/app/const';
+import { DEFAULT_TEMPERATURE } from '@/utils/app/const';
 import { saveConversation, saveConversations } from '@/utils/app/conversation';
 import { saveFolders } from '@/utils/app/folders';
 import { exportData, importData } from '@/utils/app/importExport';
@@ -25,6 +25,7 @@ import ChatbarContext from './Chatbar.context';
 import { ChatbarInitialState, initialState } from './Chatbar.state';
 
 import { v4 as uuidv4 } from 'uuid';
+import {promptsList} from "@/components/Chat/PromptsList";
 
 export const Chatbar = () => {
   const { t } = useTranslation('sidebar');
@@ -129,7 +130,12 @@ export const Chatbar = () => {
           name: t('New Conversation'),
           messages: [],
           model: OpenAIModels[defaultModelId],
-          prompt: DEFAULT_SYSTEM_PROMPT,
+          prompt: promptsList.find(prompt=>
+              prompt.id?.toLowerCase() === OpenAIModels[defaultModelId].id?.toLowerCase()
+          )?.content || "",
+          promptState: promptsList.find(prompt=>
+              prompt.id?.toLowerCase() === OpenAIModels[defaultModelId].id?.toLowerCase()
+          )?.controlState || 0,
           temperature: DEFAULT_TEMPERATURE,
           folderId: null,
         },
@@ -171,7 +177,12 @@ export const Chatbar = () => {
             name: t('New Conversation'),
             messages: [],
             model: OpenAIModels[defaultModelId],
-            prompt: DEFAULT_SYSTEM_PROMPT,
+            prompt: promptsList.find(prompt=>
+                prompt.id?.toLowerCase() === OpenAIModels[defaultModelId].id?.toLowerCase()
+            )?.content || "",
+            promptState: promptsList.find(prompt=>
+                prompt.id?.toLowerCase() === OpenAIModels[defaultModelId].id?.toLowerCase()
+            )?.controlState || 0,
             temperature: DEFAULT_TEMPERATURE,
             folderId: null,
           },

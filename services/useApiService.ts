@@ -27,13 +27,13 @@ const useApiService = () => {
 
     const getModels = async (params: GetModelsRequestProps) => {
             let url = `${params.url}/v1/models`;
-            const response = await fetch(url, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${params.key ? params.key : process.env.OPENAI_API_KEY}`
-                },
-            });
             try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${params.key ? params.key : process.env.OPENAI_API_KEY}`
+                    },
+                });
                 const data = await response.json()
                 console.log(data.data)
                 return data.data

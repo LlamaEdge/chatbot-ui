@@ -30,6 +30,7 @@ import HomeContext from './home.context';
 import {HomeInitialState, initialState} from './home.state';
 
 import {v4 as uuidv4} from 'uuid';
+import {promptsList} from "@/components/Chat/PromptsList";
 
 interface Props {
     serverSideApiKeyIsSet: boolean;
@@ -166,7 +167,6 @@ const Home = ({
 
     const handleNewConversation = () => {
         const lastConversation = conversations[conversations.length - 1];
-
         const newConversation: Conversation = {
             id: uuidv4(),
             name: t('New Conversation'),
@@ -177,7 +177,12 @@ const Home = ({
                 maxLength: OpenAIModels[defaultModelId].maxLength,
                 tokenLimit: OpenAIModels[defaultModelId].tokenLimit,
             },
-            prompt: DEFAULT_SYSTEM_PROMPT,
+            prompt: promptsList.find(prompt=>
+                prompt.id?.toLowerCase() === OpenAIModels[defaultModelId].id?.toLowerCase()
+            )?.content || "",
+            promptState: promptsList.find(prompt=>
+                prompt.id?.toLowerCase() === OpenAIModels[defaultModelId].id?.toLowerCase()
+            )?.controlState || 0,
             temperature: lastConversation?.temperature ?? DEFAULT_TEMPERATURE,
             folderId: null,
         };
@@ -325,7 +330,12 @@ const Home = ({
                     name: t('New Conversation'),
                     messages: [],
                     model: OpenAIModels[defaultModelId],
-                    prompt: DEFAULT_SYSTEM_PROMPT,
+                    prompt: promptsList.find(prompt=>
+                        prompt.id?.toLowerCase() === OpenAIModels[defaultModelId].id?.toLowerCase()
+                    )?.content || "",
+                    promptState: promptsList.find(prompt=>
+                        prompt.id?.toLowerCase() === OpenAIModels[defaultModelId].id?.toLowerCase()
+                    )?.controlState || 0,
                     temperature: lastConversation?.temperature ?? DEFAULT_TEMPERATURE,
                     folderId: null,
                 },
@@ -377,7 +387,7 @@ const Home = ({
                             <Chat stopConversationRef={stopConversationRef}/>
                         </div>
 
-                        <Promptbar/>
+                        {selectedConversation.promptState!==2 && <Promptbar/>}
                     </div>
                 </main>
             )}
