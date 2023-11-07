@@ -2,7 +2,7 @@ export const promptsList = [{
     id: "Llama-2-Chat",
     name: "llama-2-chat",
     description: "",
-    content: "Answer as concisely as possible.",
+    content: "You are a helpful, respectful and honest assistant. Always answer as short as possible, while being safe.",
     controlState: 0
 },{
     id: "Llama-2-7B-Chat",
