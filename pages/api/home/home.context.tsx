@@ -7,6 +7,7 @@ import { KeyValuePair } from '@/types/data';
 import { FolderType } from '@/types/folder';
 
 import { HomeInitialState } from './home.state';
+import {OpenAIModel} from "@/types/openai";
 
 export interface HomeContextProps {
   state: HomeInitialState;
@@ -19,6 +20,10 @@ export interface HomeContextProps {
   handleUpdateConversation: (
     conversation: Conversation,
     data: KeyValuePair,
+  ) => void;
+  handleUpdateConversationAll: (
+      conversation: Conversation,
+      data: KeyValuePair[],
   ) => void;
 }
 

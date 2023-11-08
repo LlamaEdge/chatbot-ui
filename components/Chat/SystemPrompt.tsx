@@ -156,12 +156,9 @@ export const SystemPrompt: FC<Props> = ({
             textareaRef.current.style.height = `${textareaRef.current?.scrollHeight}px`;
         }
     }, [value]);
-
     useEffect(() => {
-        if (conversation.prompt) {
-            setValue(conversation.prompt);
-        }
-    }, [conversation]);
+            setValue(conversation.prompt || "");
+    }, [conversation.prompt]);
 
     useEffect(() => {
         const handleOutsideClick = (e: MouseEvent) => {

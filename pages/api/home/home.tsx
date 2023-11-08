@@ -216,6 +216,25 @@ const Home = ({
         dispatch({field: 'conversations', value: all});
     };
 
+    const handleUpdateConversationAll = (
+        conversation: Conversation,
+        data: KeyValuePair[],
+    ) => {
+        const updatedConversation = Object.assign(conversation)
+        data.forEach(item=>{
+            updatedConversation[item.key] = item.value
+            }
+        )
+
+        const {single, all} = updateConversation(
+            updatedConversation,
+            conversations,
+        );
+
+        dispatch({field: 'selectedConversation', value: single});
+        dispatch({field: 'conversations', value: all});
+    };
+
     // EFFECTS  --------------------------------------------
 
     useEffect(() => {
@@ -358,6 +377,7 @@ const Home = ({
                 handleUpdateFolder,
                 handleSelectConversation,
                 handleUpdateConversation,
+                handleUpdateConversationAll
             }}
         >
             <Head>

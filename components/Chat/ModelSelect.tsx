@@ -3,27 +3,39 @@ import { useContext } from 'react';
 
 import { useTranslation } from 'next-i18next';
 
-import { OpenAIModel } from '@/types/openai';
+import {OpenAIModel, OpenAIModels} from '@/types/openai';
 
 import HomeContext from '@/pages/api/home/home.context';
+import {promptsList} from "@/components/Chat/PromptsList";
 
 export const ModelSelect = () => {
   const { t } = useTranslation('chat');
 
   const {
     state: { selectedConversation, models, defaultModelId },
-    handleUpdateConversation,
+    handleUpdateConversationAll,
     dispatch: homeDispatch,
   } = useContext(HomeContext);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    selectedConversation &&
-      handleUpdateConversation(selectedConversation, {
+    if(selectedConversation && (defaultModelId || e.target.value)){
+      handleUpdateConversationAll(selectedConversation, [{
         key: 'model',
         value: models.find(
-          (model) => model.id === e.target.value,
+            (model) => model.id === e.target.value,
         ) as OpenAIModel,
-      });
+      }, {
+        key: 'prompt',
+        value: promptsList.find(prompt=>
+            prompt.id?.toLowerCase() === e.target.value?.toLowerCase()
+        )?.content || "",
+      },{
+        key: 'promptState',
+        value: promptsList.find(prompt=>
+            prompt.id?.toLowerCase() === e.target.value?.toLowerCase()
+        )?.controlState || 0,
+      }]);
+    }
   };
 
   return (
