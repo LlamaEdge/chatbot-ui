@@ -9,7 +9,7 @@ import {useCreateReducer} from '@/hooks/useCreateReducer';
 import useApiService from '@/services/useApiService';
 
 import {cleanConversationHistory, cleanSelectedConversation,} from '@/utils/app/clean';
-import {DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE} from '@/utils/app/const';
+import {DEFAULT_TEMPERATURE} from '@/utils/app/const';
 import {saveConversation, saveConversations, updateConversation,} from '@/utils/app/conversation';
 import {saveFolders} from '@/utils/app/folders';
 import {savePrompts} from '@/utils/app/prompts';
@@ -18,7 +18,7 @@ import {getSettings} from '@/utils/app/settings';
 import {Conversation} from '@/types/chat';
 import {KeyValuePair} from '@/types/data';
 import {FolderInterface, FolderType} from '@/types/folder';
-import {fallbackModelID, OpenAIModelID, OpenAIModels} from '@/types/openai';
+import {fallbackModelID, OpenAIModelID} from '@/types/openai';
 import {Prompt} from '@/types/prompt';
 
 import {Chat} from '@/components/Chat/Chat';
@@ -36,6 +36,17 @@ interface Props {
     serverSideApiKeyIsSet: boolean;
     serverSidePluginKeysSet: boolean;
     defaultModelId: OpenAIModelID;
+}
+
+interface DispatchData {
+    id: String;
+    name: String|null;
+    messages: [];
+    model?: Object;
+    prompt?: String;
+    promptState?:Number;
+    temperature: Number;
+    folderId: String | null;
 }
 
 const Home = ({
@@ -59,7 +70,7 @@ const Home = ({
             conversations,
             selectedConversation,
             prompts,
-            temperature,
+            models
         },
         dispatch,
     } = contextValue;
@@ -75,16 +86,16 @@ const Home = ({
                 key: apiKey,
             },
         );
-        if(dispatch){
+        if (dispatch) {
             dispatch({field: 'models', value: data});
         }
     }
 
     useEffect(() => {
-        if(api){
+        if (api) {
             getData()
         }
-    }, [api,apiKey])
+    }, [api, apiKey])
 
     // FETCH MODELS ----------------------------------------------
 
@@ -167,35 +178,33 @@ const Home = ({
 
     const handleNewConversation = () => {
         const lastConversation = conversations[conversations.length - 1];
-        const newConversation: Conversation = {
-            id: uuidv4(),
-            name: t('New Conversation'),
-            messages: [],
-            model: lastConversation?.model || {
-                id: OpenAIModels[defaultModelId].id,
-                name: OpenAIModels[defaultModelId].name,
-                maxLength: OpenAIModels[defaultModelId].maxLength,
-                tokenLimit: OpenAIModels[defaultModelId].tokenLimit,
-            },
-            prompt: promptsList.find(prompt=>
-                prompt.id?.toLowerCase() === OpenAIModels[defaultModelId].id?.toLowerCase()
-            )?.content || "",
-            promptState: promptsList.find(prompt=>
-                prompt.id?.toLowerCase() === OpenAIModels[defaultModelId].id?.toLowerCase()
-            )?.controlState || 0,
-            temperature: lastConversation?.temperature ?? DEFAULT_TEMPERATURE,
-            folderId: null,
-        };
+        if (models && models.length > 0) {
+            const newConversation: Conversation = {
+                id: uuidv4(),
+                name: t('New Conversation'),
+                messages: [],
+                model: lastConversation?.model || models[0],
+                prompt: promptsList.find(prompt =>
+                    prompt.id?.toLowerCase() === models[0].name?.toLowerCase()
+                )?.content || "",
+                promptState: promptsList.find(prompt =>
+                    prompt.id?.toLowerCase() === models[0].name?.toLowerCase()
+                )?.controlState || 0,
+                temperature: lastConversation?.temperature ?? DEFAULT_TEMPERATURE,
+                folderId: null,
+            };
 
-        const updatedConversations = [...conversations, newConversation];
+            const updatedConversations = [...conversations, newConversation];
 
-        dispatch({field: 'selectedConversation', value: newConversation});
-        dispatch({field: 'conversations', value: updatedConversations});
+            dispatch({field: 'selectedConversation', value: newConversation});
+            dispatch({field: 'conversations', value: updatedConversations});
 
-        saveConversation(newConversation);
-        saveConversations(updatedConversations);
+            saveConversation(newConversation);
+            saveConversations(updatedConversations);
 
-        dispatch({field: 'loading', value: false});
+            dispatch({field: 'loading', value: false});
+        }
+
     };
 
     const handleUpdateConversation = (
@@ -221,8 +230,8 @@ const Home = ({
         data: KeyValuePair[],
     ) => {
         const updatedConversation = Object.assign(conversation)
-        data.forEach(item=>{
-            updatedConversation[item.key] = item.value
+        data.forEach(item => {
+                updatedConversation[item.key] = item.value
             }
         )
 
@@ -244,8 +253,6 @@ const Home = ({
     }, [selectedConversation]);
 
     useEffect(() => {
-        defaultModelId &&
-        dispatch({field: 'defaultModelId', value: defaultModelId});
         serverSideApiKeyIsSet &&
         dispatch({
             field: 'serverSideApiKeyIsSet',
@@ -256,7 +263,7 @@ const Home = ({
             field: 'serverSidePluginKeysSet',
             value: serverSidePluginKeysSet,
         });
-    }, [defaultModelId, serverSideApiKeyIsSet, serverSidePluginKeysSet]);
+    }, [serverSideApiKeyIsSet, serverSidePluginKeysSet]);
 
     // ON LOAD --------------------------------------------
 
@@ -342,27 +349,29 @@ const Home = ({
             });
         } else {
             const lastConversation = conversations[conversations.length - 1];
-            dispatch({
-                field: 'selectedConversation',
-                value: {
+            let dispatchData:DispatchData ={
                     id: uuidv4(),
                     name: t('New Conversation'),
                     messages: [],
-                    model: OpenAIModels[defaultModelId],
-                    prompt: promptsList.find(prompt=>
-                        prompt.id?.toLowerCase() === OpenAIModels[defaultModelId].id?.toLowerCase()
-                    )?.content || "",
-                    promptState: promptsList.find(prompt=>
-                        prompt.id?.toLowerCase() === OpenAIModels[defaultModelId].id?.toLowerCase()
-                    )?.controlState || 0,
                     temperature: lastConversation?.temperature ?? DEFAULT_TEMPERATURE,
                     folderId: null,
-                },
+                }
+            if(models && models.length > 0){
+                dispatchData.model = models[0]
+                dispatchData.prompt = promptsList.find(prompt =>
+                    prompt.id?.toLowerCase() === models[0]?.name?.toLowerCase()
+                )?.content || ""
+                dispatchData.promptState = promptsList.find(prompt =>
+                    prompt.id?.toLowerCase() === models[0]?.name?.toLowerCase()
+                )?.controlState || 0
+            }
+            dispatch({
+                field: 'selectedConversation', value:dispatchData
             });
         }
     }, [
-        defaultModelId,
         dispatch,
+        models,
         serverSideApiKeyIsSet,
         serverSidePluginKeysSet,
     ]);
@@ -407,7 +416,7 @@ const Home = ({
                             <Chat stopConversationRef={stopConversationRef}/>
                         </div>
 
-                        {selectedConversation.promptState!==2 && <Promptbar/>}
+                        {selectedConversation.promptState !== 2 && <Promptbar/>}
                     </div>
                 </main>
             )}

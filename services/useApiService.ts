@@ -1,10 +1,14 @@
-import {useCallback} from 'react';
-
-import {useFetch} from '@/hooks/useFetch';
-
 export interface GetModelsRequestProps {
     url: string;
     key: string;
+}
+
+export interface modelObject {
+    id: String;
+    name?: String;
+    created: Number;
+    object: String;
+    owned_by: String;
 }
 
 const useApiService = () => {
@@ -26,46 +30,37 @@ const useApiService = () => {
     // );
 
     const getModels = async (params: GetModelsRequestProps) => {
-            let url = `${params.url}/v1/models`;
-            try {
-                const response = await fetch(url, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${params.key ? params.key : process.env.OPENAI_API_KEY}`
-                    },
-                });
-                const data = await response.json()
-                return data.data
-                //test data
-                // return [{
-                //     id: "Llama-2-Chat",
-                //     name: "llama-2-chat"
-                // },{
-                //     id: "Llama-2-7B-Chat",
-                //     name: "Llama-2-7B-Chat"
-                // },{
-                //     id: "Llama-2-13B-Chat",
-                //     name: "Llama-2-13B-Chat"
-                // },{
-                //     id: "CodeLlama-13B",
-                //     name: "CodeLlama-13B"
-                // },{
-                //     id: "Wizard-Vicuna-13B",
-                //     name: "Wizard-Vicuna-13B"
-                // },{
-                //     id: "CausalLM-14B",
-                //     name: "CausalLM-14B"
-                // },{
-                //     id: "Mistral-7B-Instruct-v0.1",
-                //     name: "Mistral-7B-Instruct-v0.1"
-                // },{
-                //     id: "BELLE-Llama2-13B-chat",
-                //     name: "BELLE-Llama2-13B-chat"
-                // }]
-            }catch (e) {
-                return {}
+        let url = `${params.url}/v1/models`;
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${params.key ? params.key : process.env.OPENAI_API_KEY}`
+                },
+            });
+            const res = await response.json()
+            const data:modelObject[] = res.data
+            // test data
+            // const data:modelObject[] = [{
+            //     id: "Llama-2-7B:llama-2-chat", "created": 1699511491, "object": "model", "owned_by": "Not specified"
+            // }, {
+            //     id: "Llama-2-13B:llama-2-chat", "created": 1699511491, "object": "model", "owned_by": "Not specified"
+            // }]
+            if(data && data.length > 0){
+                return data.map(item => {
+                    if (item.id.indexOf(":") !== -1 && !item.name){
+                        item.name = item.id.split(":")[1]
+                        item.id = item.id.split(":")[0]
+                    }
+                    return item
+                })
+            }else {
+                return []
             }
+        } catch (e) {
+            return {}
         }
+    }
 
     return {
         getModels,

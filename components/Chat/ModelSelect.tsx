@@ -19,20 +19,21 @@ export const ModelSelect = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if(selectedConversation && (defaultModelId || e.target.value)){
+      const thisModel = models.find(
+          (model) => model.id === e.target.value,
+      ) as OpenAIModel
       handleUpdateConversationAll(selectedConversation, [{
         key: 'model',
-        value: models.find(
-            (model) => model.id === e.target.value,
-        ) as OpenAIModel,
+        value: thisModel,
       }, {
         key: 'prompt',
         value: promptsList.find(prompt=>
-            prompt.id?.toLowerCase() === e.target.value?.toLowerCase()
+            prompt.id?.toLowerCase() === thisModel.name?.toLowerCase()
         )?.content || "",
       },{
         key: 'promptState',
         value: promptsList.find(prompt=>
-            prompt.id?.toLowerCase() === e.target.value?.toLowerCase()
+            prompt.id?.toLowerCase() === thisModel.name?.toLowerCase()
         )?.controlState || 0,
       }]);
     }
