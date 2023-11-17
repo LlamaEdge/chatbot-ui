@@ -16,7 +16,7 @@ import {ErrorMessageDiv} from './ErrorMessageDiv';
 import {ModelSelect} from './ModelSelect';
 import {SystemPrompt} from './SystemPrompt';
 import {MemoizedChatMessage} from './MemoizedChatMessage';
-import {DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE} from "@/utils/app/const";
+import {DEFAULT_TEMPERATURE} from "@/utils/app/const";
 import {OpenAIError, OpenAIStream} from "@/utils/server";
 
 interface Props {

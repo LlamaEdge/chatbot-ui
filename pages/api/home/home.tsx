@@ -343,6 +343,19 @@ const Home = ({
                 parsedSelectedConversation,
             );
 
+            if(cleanedSelectedConversation.model && models && models.length > 0) {
+                const haveThisSelectedModels = models.filter(model=>model.id === cleanedSelectedConversation.model.id)
+                if(!haveThisSelectedModels || haveThisSelectedModels.length === 0){
+                    cleanedSelectedConversation.model = models[0]
+                    cleanedSelectedConversation.prompt = promptsList.find(prompt =>
+                        prompt.id?.toLowerCase() === models[0]?.name?.toLowerCase()
+                    )?.content || ""
+                    cleanedSelectedConversation.promptState = promptsList.find(prompt =>
+                        prompt.id?.toLowerCase() === models[0]?.name?.toLowerCase()
+                    )?.controlState || 0
+                }
+            }
+
             dispatch({
                 field: 'selectedConversation',
                 value: cleanedSelectedConversation,
