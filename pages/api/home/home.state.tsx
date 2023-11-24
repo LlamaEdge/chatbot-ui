@@ -31,7 +31,7 @@ export interface HomeInitialState {
 }
 
 export const initialState: HomeInitialState = {
-  api: '',
+  api: process.env.NEXT_PUBLIC_API_URL || "",
   apiKey: '',
   loading: false,
   pluginKeys: [],
