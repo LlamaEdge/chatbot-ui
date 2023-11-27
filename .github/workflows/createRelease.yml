@@ -1,8 +1,8 @@
 name: Release
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*.*.*'
 
 jobs:
 
@@ -10,9 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Echo
-        - run: |
-          echo "Current branch is: ${{github.ref}}"
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
