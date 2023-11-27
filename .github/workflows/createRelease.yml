@@ -5,6 +5,8 @@ on:
       - main
 
 jobs:
+  - run: |
+      echo "Current branch is : ${{github.ref}}"
   build:
     runs-on: ubuntu-latest
     steps:
