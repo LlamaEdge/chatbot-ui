@@ -26,18 +26,30 @@ jobs:
           zip -r out.zip out
       - name: Create Release
         id: create_release
+        permissions:
+          actions: write
+          checks: write
+          contents: write
+          deployments: write
+          issues: write
+          packages: write
+          pull-requests: write
+          repository-projects: write
+          security-events: write
+          statuses: write
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./out.zip
-          asset_name: out.zip
-          asset_content_type: application/zip
+          body_path: ./out.zip
+#      - name: Upload Release Asset
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          upload_url: ${{ steps.create_release.outputs.upload_url }}
+#          asset_path: ./out.zip
+#          asset_name: out.zip
+#          asset_content_type: application/zip
