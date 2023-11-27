@@ -5,40 +5,42 @@ on:
       - main
 
 jobs:
-  - run: |
-      echo "Current branch is : ${{github.ref}}"
+
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: 16.x
-    - name: Install Dependencies
-      run: |
-        yarn
-    - name: Build Project
-      run: |
-        yarn build
-        yarn next export
-    - name: Zip Export 
-      run: |
-        zip -r out.zip out
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} 
-        asset_path: ./out.zip
-        asset_name: out.zip
-        asset_content_type: application/zip
+      - uses: actions/checkout@v2
+      - name: Echo
+        - run: |
+          echo "Current branch is: ${{github.ref}}"
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - name: Install Dependencies
+        run: |
+          yarn
+      - name: Build Project
+        run: |
+          yarn build
+          yarn next export
+      - name: Zip Export
+        run: |
+          zip -r out.zip out
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./out.zip
+          asset_name: out.zip
+          asset_content_type: application/zip
