@@ -48,6 +48,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./out.zip
-          asset_name: out.zip
+          asset_path: ./out.tar.gz
+          asset_name: out.tar.gz
           asset_content_type: application/zip
