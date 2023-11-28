@@ -24,7 +24,7 @@ jobs:
         yarn next export
     - name: Zip Export 
       run: |
-        zip -r out.zip out
+        tar czvf out.tar.gz out
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
