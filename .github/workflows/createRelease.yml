@@ -31,9 +31,10 @@ jobs:
         run: |
           yarn build
           yarn next export
-      - name: Zip Export
+      - name: Rename and zip Export
         run: |
-          tar czvf out.tar.gz out
+          mv out chatbot-ui
+          tar czvf chatbot-ui.tar.gz chatbot-ui
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -48,6 +49,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./out.tar.gz
-          asset_name: out.tar.gz
+          asset_path: ./chatbot-ui.tar.gz
+          asset_name: chatbot-ui.tar.gz
           asset_content_type: application/zip
