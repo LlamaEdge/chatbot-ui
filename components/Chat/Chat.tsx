@@ -215,7 +215,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                         value: updatedConversation,
                                     });
                                 }
-                                if (done) {
+                                if (done && queue.length === 0) {
                                     homeDispatch({field: 'messageIsStreaming', value: false});
                                     controller.abort();
                                 }
