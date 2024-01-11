@@ -2,7 +2,6 @@ import {IconClearAll, IconSettings} from '@tabler/icons-react';
 import {memo, MutableRefObject, useCallback, useContext, useEffect, useRef, useState,} from 'react';
 
 import {useTranslation} from 'next-i18next';
-import {saveConversations, updateConversation,} from '@/utils/app/conversation';
 import {throttle} from '@/utils/data/throttle';
 
 import {ChatBody, Conversation, Message} from '@/types/chat';
@@ -51,6 +50,10 @@ export const Chat = memo(({stopConversationRef}: Props) => {
         const messagesEndRef = useRef<HTMLDivElement>(null);
         const chatContainerRef = useRef<HTMLDivElement>(null);
         const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+        function delay(time: number | undefined) {
+            return new Promise(resolve => setTimeout(resolve, time));
+        }
 
         const handleSend = useCallback(
             async (message: Message, deleteCount = 0, plugin: Plugin | null = null) => {
@@ -133,38 +136,92 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                         }
                     }
 
-                    const data = response.choices[0].message;
-                    const updatedMessages: Message[] = [
-                        ...updatedConversation.messages,
-                        {role: 'assistant', content: data.content},
-                    ];
-                    updatedConversation = {
-                        ...updatedConversation,
-                        messages: updatedMessages,
-                    };
+                    if (response) {
+                        // @ts-ignore
+                        const reader = response.getReader();
+                        const decoder = new TextDecoder();
+                        let done = false;
+                        let isFirst = true;
+                        let queue: any[] = [];
+                        let text = '';
+                        while (!done || queue.length !== 0) {
+                            const {value} = await reader.read();
+                            let chunkValue = decoder.decode(value);
+                            const regex = /}(?={)/g;
+                            const parts = chunkValue.split(regex);
+                            const objects = parts.map(part => {
+                                part = part.trim();
+                                if (!part.startsWith('{')) {
+                                    part = '{' + part;
+                                }
+                                if (!part.endsWith('}')) {
+                                    part = part + '}';
+                                }
+                                return JSON.parse(part);
+                            });
 
-                    homeDispatch({
-                        field: 'selectedConversation',
-                        value: updateConversation,
-                    });
-                    const updatedConversations: Conversation[] = conversations.map(
-                        (conversation) => {
-                            if (conversation.id === selectedConversation.id) {
-                                return updatedConversation;
+                            objects.forEach(obj => {
+                                if (obj && obj["choices"]) {
+                                    obj["choices"].forEach((obj1: { [x: string]: { [x: string]: any; }; }) => {
+                                        if (obj1) {
+                                            if (obj1["finish_reason"] && obj1["finish_reason"] !== null) {
+                                                done = true;
+                                            } else {
+                                                if (!done && obj1["delta"] && obj1["delta"]["content"]) {
+                                                    queue.push(obj1["delta"]["content"]);
+                                                }
+                                            }
+                                        }
+                                    })
+                                }
+                            });
+
+                            for (const item of queue) {
+                                const thisWord = queue.shift();
+                                await delay(Math.random() * 200);
+                                text += thisWord
+                                if (isFirst) {
+                                    isFirst = false;
+                                    homeDispatch({field: 'loading', value: false});
+                                    const updatedMessages: Message[] = [
+                                        ...updatedConversation.messages,
+                                        {role: 'assistant', content: text},
+                                    ];
+                                    updatedConversation = {
+                                        ...updatedConversation,
+                                        messages: updatedMessages,
+                                    };
+                                    homeDispatch({
+                                        field: 'selectedConversation',
+                                        value: updatedConversation,
+                                    });
+                                } else {
+                                    const updatedMessages: Message[] =
+                                        updatedConversation.messages.map((message, index) => {
+                                            if (index === updatedConversation.messages.length - 1) {
+                                                return {
+                                                    ...message,
+                                                    content: text,
+                                                };
+                                            }
+                                            return message;
+                                        });
+                                    updatedConversation = {
+                                        ...updatedConversation,
+                                        messages: updatedMessages,
+                                    };
+                                    homeDispatch({
+                                        field: 'selectedConversation',
+                                        value: updatedConversation,
+                                    });
+                                }
+                                if (done) {
+                                    homeDispatch({field: 'messageIsStreaming', value: false});
+                                    controller.abort();
+                                }
                             }
-                            return conversation;
-                        },
-                    );
-                    if (updatedConversations.length === 0) {
-                        updatedConversations.push(updatedConversation);
+                        }
                     }
-                    saveConversations(updatedConversations);
-                    homeDispatch({field: 'loading', value: false});
-                    homeDispatch({field: 'messageIsStreaming', value: false});
-                    homeDispatch({
-                        field: 'selectedConversation',
-                        value: updatedConversation,
-                    });
                 }
             },
             [
