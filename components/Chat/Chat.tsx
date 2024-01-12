@@ -142,6 +142,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                         const decoder = new TextDecoder();
                         let done = false;
                         let isFirst = true;
+                        let isShowFirst = true;
                         let queue: any[] = [];
                         let text = '';
                         while (!done || queue.length !== 0) {
@@ -178,7 +179,11 @@ export const Chat = memo(({stopConversationRef}: Props) => {
 
                             for (const item of queue) {
                                 const thisWord = queue.shift();
-                                await delay(Math.random() * 200);
+                                if(!isShowFirst){
+                                    await delay(Math.random() * 500);
+                                }else {
+                                    isShowFirst = false;
+                                }
                                 text += thisWord
                                 if (isFirst) {
                                     isFirst = false;
