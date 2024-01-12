@@ -169,6 +169,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                                 done = true;
                                             } else {
                                                 if (!done && obj1["delta"] && obj1["delta"]["content"]) {
+                                                    console.log("push data:", obj1["delta"]["content"])
                                                     queue.push(obj1["delta"]["content"]);
                                                 }
                                             }
@@ -179,12 +180,14 @@ export const Chat = memo(({stopConversationRef}: Props) => {
 
                             for (const item of queue) {
                                 const thisWord = queue.shift();
-                                if(!isShowFirst){
-                                    await delay(Math.random() * 500);
-                                }else {
+                                console.log("push speed:", queue.length < 10 ? 500 : 200)
+                                if (!isShowFirst) {
+                                    await delay(Math.random() * (queue.length < 10 ? 500 : 200));
+                                } else {
                                     isShowFirst = false;
                                 }
                                 text += thisWord
+                                console.log("set data:", thisWord)
                                 if (isFirst) {
                                     isFirst = false;
                                     homeDispatch({field: 'loading', value: false});
@@ -220,6 +223,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                         value: updatedConversation,
                                     });
                                 }
+                                console.log("push speed:", queue.length < 10 ? 500 : 200)
                                 if (done && queue.length === 0) {
                                     homeDispatch({field: 'messageIsStreaming', value: false});
                                     controller.abort();
