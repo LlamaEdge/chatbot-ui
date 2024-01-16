@@ -150,7 +150,8 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                             let chunkValue = decoder.decode(value);
                             const regex = /}(?={)/g;
                             const parts = chunkValue.split(regex);
-                            const objects = parts.map(part => {
+                            let objects: any[] = []
+                                parts.forEach(part => {
                                 part = part.trim();
                                 if (!part.startsWith('{')) {
                                     part = '{' + part;
@@ -158,7 +159,11 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                 if (!part.endsWith('}')) {
                                     part = part + '}';
                                 }
-                                return JSON.parse(part);
+                                try {
+                                    objects.push(JSON.parse(part));
+                                }catch (e) {
+                                    console.log("error JSON",part);
+                                }
                             });
 
                             objects.forEach(obj => {
