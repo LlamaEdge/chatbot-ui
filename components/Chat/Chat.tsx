@@ -145,25 +145,36 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                         let isShowFirst = true;
                         let queue: any[] = [];
                         let text = '';
+                        let notFinishData = ""
                         while (!done || queue.length !== 0) {
                             const {value} = await reader.read();
                             let chunkValue = decoder.decode(value);
-                            const regex = /(}(?={"id":"))/;
+                            const regex = /}(?={)/g;
                             const parts = chunkValue.split(regex);
-                            console.log(parts)
                             let objects: any[] = []
                                 parts.forEach(part => {
+                                    let isError = false
                                 part = part.trim();
                                 if (!part.startsWith('{')) {
-                                    part = '{' + part;
+                                    if(notFinishData){
+                                        part = notFinishData + part
+                                        notFinishData = ""
+                                    }else {
+                                        isError = true
+                                    }
                                 }
                                 if (!part.endsWith('}')) {
-                                    part = part + '}';
+                                    notFinishData = part
+                                    isError = true
                                 }
-                                try {
-                                    objects.push(JSON.parse(part));
-                                }catch (e) {
-                                    console.log("error JSON",part);
+                                if(!isError){
+                                    try {
+                                        objects.push(JSON.parse(part));
+                                    }catch (e) {
+                                        console.log("error JSON",part);
+                                    }
+                                }else {
+                                    console.log("isError",part)
                                 }
                             });
 
