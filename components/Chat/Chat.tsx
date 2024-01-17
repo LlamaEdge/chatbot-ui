@@ -145,7 +145,6 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                         let isShowFirst = true;
                         let queue: any[] = [];
                         let text = '';
-                        let notFinishData = ""
                         while (!done || queue.length !== 0) {
                             const {value} = await reader.read();
                             let chunkValue = decoder.decode(value);
@@ -153,28 +152,17 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                             const parts = chunkValue.split(regex);
                             let objects: any[] = []
                                 parts.forEach(part => {
-                                    let isError = false
                                 part = part.trim();
                                 if (!part.startsWith('{')) {
-                                    if(notFinishData){
-                                        part = notFinishData + part
-                                        notFinishData = ""
-                                    }else {
-                                        isError = true
-                                    }
+                                    part = '{' + part;
                                 }
                                 if (!part.endsWith('}')) {
-                                    notFinishData = part
-                                    isError = true
+                                    part = part + '}';
                                 }
-                                if(!isError){
-                                    try {
-                                        objects.push(JSON.parse(part));
-                                    }catch (e) {
-                                        console.log("error JSON",part);
-                                    }
-                                }else {
-                                    console.log("isError",part)
+                                try {
+                                    objects.push(JSON.parse(part));
+                                }catch (e) {
+                                    console.log("error JSON",part);
                                 }
                             });
 
