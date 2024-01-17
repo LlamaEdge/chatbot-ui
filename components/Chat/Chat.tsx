@@ -148,39 +148,35 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                         while (!done || queue.length !== 0) {
                             const {value} = await reader.read();
                             let chunkValue = decoder.decode(value);
-                            const regexText = /"content":"([^"]+)"/g;
-                            const regexReason = /"finish_reason":"(.*?)"/g;
-
-                            let matchText;
-                            let matchReason;
-
-                            while (matchText = regexText.exec(chunkValue)) {
-                                matchReason = regexReason.exec(chunkValue)
-                                if (matchReason && matchReason[1] && matchReason[1] === "null") {
-                                    queue.push(matchText[1]);
-                                    console.log("match", matchText[1])
-                                    console.log("Reason", matchReason)
-                                }else {
-                                    done = true;
+                            const regex = /}(?={)/g;
+                            const parts = chunkValue.split(regex);
+                            const objects = parts.map(part => {
+                                part = part.trim();
+                                if (!part.startsWith('{')) {
+                                    part = '{' + part;
                                 }
-                            }
+                                if (!part.endsWith('}')) {
+                                    part = part + '}';
+                                }
+                                return JSON.parse(part);
+                            });
 
-                            // objects.forEach(obj => {
-                            //     if (obj && obj["choices"]) {
-                            //         obj["choices"].forEach((obj1: { [x: string]: { [x: string]: any; }; }) => {
-                            //             if (obj1) {
-                            //                 if (obj1["finish_reason"] && obj1["finish_reason"] !== null) {
-                            //                     done = true;
-                            //                 } else {
-                            //                     if (!done && obj1["delta"] && obj1["delta"]["content"]) {
-                            //                         console.log("push data:", obj1["delta"]["content"])
-                            //                         queue.push(obj1["delta"]["content"]);
-                            //                     }
-                            //                 }
-                            //             }
-                            //         })
-                            //     }
-                            // });
+                            objects.forEach(obj => {
+                                if (obj && obj["choices"]) {
+                                    obj["choices"].forEach((obj1: { [x: string]: { [x: string]: any; }; }) => {
+                                        if (obj1) {
+                                            if (obj1["finish_reason"] && obj1["finish_reason"] !== null) {
+                                                done = true;
+                                            } else {
+                                                if (!done && obj1["delta"] && obj1["delta"]["content"]) {
+                                                    console.log("push data:", obj1["delta"]["content"])
+                                                    queue.push(obj1["delta"]["content"]);
+                                                }
+                                            }
+                                        }
+                                    })
+                                }
+                            });
 
                             for (const item of queue) {
                                 const thisWord = queue.shift();
