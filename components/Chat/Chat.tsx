@@ -148,13 +148,20 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                         while (!done || queue.length !== 0) {
                             const {value} = await reader.read();
                             let chunkValue = decoder.decode(value);
-                            const regex = /"content":"([^"]+)"/g;
+                            const regexText = /"content":"([^"]+)"/g;
+                            const regexReason = /"finish_reason":"(.*?)"/g;
 
-                            let match;
+                            let matchText;
+                            let matchReason;
 
-                            while (match = regex.exec(chunkValue)) {
-                                if(match[1]){
-                                    queue.push(match[1]);
+                            while (matchText = regexText.exec(chunkValue)) {
+                                matchReason = regexReason.exec(chunkValue)
+                                if (matchReason && matchReason[1] && matchReason[1] === "null") {
+                                    queue.push(matchText[1]);
+                                    console.log("match", matchText[1])
+                                    console.log("Reason", matchReason)
+                                }else {
+                                    done = true;
                                 }
                             }
                             // const regex = /}(?={)/g;
