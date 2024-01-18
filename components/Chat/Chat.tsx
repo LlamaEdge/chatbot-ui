@@ -152,29 +152,33 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                             const regex = /}(?={)/g;
                             const parts = chunkValue.split(regex);
                             let objects: any[] = []
-                                parts.forEach(part => {
-                                    let isError = false
+                            parts.forEach(part => {
+                                console.log("this part",part)
+                                let isError = false
                                 part = part.trim();
                                 if (!part.startsWith('{')) {
-                                    if(notFinishData){
+                                    console.log("withoutStart")
+                                    if (notFinishData) {
+                                        console.log("fix part")
+                                        console.log("notFinishData",notFinishData)
                                         part = notFinishData + part
                                         notFinishData = ""
-                                    }else {
+                                    } else {
                                         isError = true
                                     }
-                                }
-                                if (!part.endsWith('}')) {
+                                } else if (!part.endsWith('}')) {
                                     notFinishData = part
+                                    console.log("withoutEnd")
                                     isError = true
                                 }
-                                if(!isError){
+                                if (!isError) {
                                     try {
                                         objects.push(JSON.parse(part));
-                                    }catch (e) {
-                                        console.log("error JSON",part);
+                                    } catch (e) {
+                                        console.log("error JSON", part);
                                     }
-                                }else {
-                                    console.log("isError",part)
+                                } else {
+                                    console.log("isError", part)
                                 }
                             });
 
