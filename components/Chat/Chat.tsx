@@ -145,24 +145,35 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                         let isShowFirst = true;
                         let queue: any[] = [];
                         let text = '';
-                        while (!done || queue.length !== 0) {
+                        let notFinishData = ""
+                        let a = 0
+                        while ((!done || queue.length !== 0) && a < 100) {
+                            a+=1
                             const {value} = await reader.read();
                             let chunkValue = decoder.decode(value);
-                            const regex = /}(?={)/g;
+                            const regex = /(?<=})(?={)/g;
                             const parts = chunkValue.split(regex);
                             let objects: any[] = []
-                                parts.forEach(part => {
+                            parts.forEach(part => {
+                                let isError = false
                                 part = part.trim();
                                 if (!part.startsWith('{')) {
-                                    part = '{' + part;
+                                    if (notFinishData) {
+                                        part = notFinishData + part
+                                        notFinishData = ""
+                                    } else {
+                                        isError = true
+                                    }
+                                } else if (!part.endsWith('}')) {
+                                    notFinishData = part
+                                    isError = true
                                 }
-                                if (!part.endsWith('}')) {
-                                    part = part + '}';
-                                }
-                                try {
-                                    objects.push(JSON.parse(part));
-                                }catch (e) {
-                                    console.log("error JSON",part);
+                                if (!isError) {
+                                    try {
+                                        objects.push(JSON.parse(part));
+                                    } catch (e) {
+                                        console.log("error JSON", part);
+                                    }
                                 }
                             });
 
@@ -174,7 +185,6 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                                 done = true;
                                             } else {
                                                 if (!done && obj1["delta"] && obj1["delta"]["content"]) {
-                                                    console.log("push data:", obj1["delta"]["content"])
                                                     queue.push(obj1["delta"]["content"]);
                                                 }
                                             }
@@ -185,14 +195,12 @@ export const Chat = memo(({stopConversationRef}: Props) => {
 
                             for (const item of queue) {
                                 const thisWord = queue.shift();
-                                console.log("push speed:", queue.length < 10 ? 500 : 200)
                                 if (!isShowFirst) {
                                     await delay(Math.random() * (queue.length < 10 ? 500 : 200));
                                 } else {
                                     isShowFirst = false;
                                 }
                                 text += thisWord
-                                console.log("set data:", thisWord)
                                 if (isFirst) {
                                     isFirst = false;
                                     homeDispatch({field: 'loading', value: false});
@@ -228,7 +236,6 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                         value: updatedConversation,
                                     });
                                 }
-                                console.log("push speed:", queue.length < 10 ? 500 : 200)
                                 if (done && queue.length === 0) {
                                     homeDispatch({field: 'messageIsStreaming', value: false});
                                     controller.abort();
