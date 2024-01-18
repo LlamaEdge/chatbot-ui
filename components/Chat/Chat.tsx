@@ -146,9 +146,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                         let queue: any[] = [];
                         let text = '';
                         let notFinishData = ""
-                        let a = 0
-                        while ((!done || queue.length !== 0) && a < 100) {
-                            a+=1
+                        while (!done || queue.length !== 0) {
                             const {value} = await reader.read();
                             let chunkValue = decoder.decode(value);
                             const regex = /(?<=})(?={)/g;
