@@ -1,6 +1,7 @@
 # Chatbot UI Improvement
 
-This project is an improved version of chatbot UI that allows customizing request URLs.
+This project is an improved version of [chatbot UI](https://github.com/mckaywrigley/chatbot-ui) that allows customizing request URLs. The project is forked from [mckaywrigley/chatbot-ui](https://github.com/mckaywrigley/chatbot-ui), which using MIT license.
+
 ## Getting Started
 
 Clone this project:
