@@ -275,6 +275,12 @@ const Home = ({
                 value: settings.theme,
             });
         }
+        if (settings.isStream) {
+            dispatch({
+                field: 'isStream',
+                value: settings.isStream,
+            });
+        }
 
         const api = localStorage.getItem('api');
         const apiKey = localStorage.getItem('apiKey');
