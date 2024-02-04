@@ -59,7 +59,7 @@ export const ChatbarSettings = () => {
         onClick={() => setIsSettingDialog(true)}
       />
 
-      {/*<QueryUrl api={api} onApiChange={handleApiChange} />*/}
+      <QueryUrl api={api} onApiChange={handleApiChange} />
 
       {/*<Key apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />*/}
 
