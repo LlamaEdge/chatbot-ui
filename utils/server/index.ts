@@ -26,6 +26,7 @@ export const OpenAIStream = async (
   api: string,
   key: string,
   messages: Message[],
+  isStream: Boolean
 ) => {
   let queryUrl = `${api}/v1/chat/completions`;
   // if (OPENAI_API_TYPE === 'azure') {
@@ -56,30 +57,33 @@ export const OpenAIStream = async (
       ],
       max_tokens: 1000,
       temperature: temperature,
-      stream: true
+      stream: isStream
     }),
   });
-
-  const encoder = new TextEncoder();
   const decoder = new TextDecoder();
 
   if (res.status !== 200) {
     const result = await res.json();
     if (result.error) {
       throw new OpenAIError(
-        result.error.message,
-        result.error.type,
-        result.error.param,
-        result.error.code,
+          result.error.message,
+          result.error.type,
+          result.error.param,
+          result.error.code,
       );
     } else {
       throw new Error(
-        `OpenAI API returned an error: ${
-          decoder.decode(result?.value) || result.statusText
-        }`,
+          `OpenAI API returned an error: ${
+              decoder.decode(result?.value) || result.statusText
+          }`,
       );
     }
   }
 
-  return res.body;
+  if(isStream){
+    return res.body;
+  }else {
+    return await res.json();
+  }
+
 };

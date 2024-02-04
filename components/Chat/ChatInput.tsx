@@ -389,12 +389,12 @@ export const ChatInput = ({
           "Power by ",
         )}
         <a
-            href="https://flows.network"
+            href="https://llamaedge.com"
             target="_blank"
             rel="noreferrer"
             className="underline"
         >
-          Flows.Network
+          LlamaEdge
         </a>
       </div>
     </div>
