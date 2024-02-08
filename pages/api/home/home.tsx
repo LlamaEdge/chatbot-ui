@@ -91,6 +91,12 @@ const Home = ({
         }
     }
 
+    useEffect(()=>{
+        if(models && (!conversations || conversations && conversations.length===0) && handleNewConversation){
+            handleNewConversation()
+        }
+    },[models])
+
     useEffect(() => {
         if (api) {
             getData()
@@ -409,7 +415,7 @@ const Home = ({
             }}
         >
             <Head>
-                <title>Chatbot UI</title>
+                <title>LlamaEdge Chat</title>
                 <meta name="description" content="ChatGPT but better."/>
                 <meta
                     name="viewport"
@@ -435,7 +441,7 @@ const Home = ({
                             <Chat stopConversationRef={stopConversationRef}/>
                         </div>
 
-                        {selectedConversation.promptState !== 2 && <Promptbar/>}
+                        {/*{selectedConversation.promptState !== 2 && <Promptbar/>}*/}
                     </div>
                 </main>
             )}

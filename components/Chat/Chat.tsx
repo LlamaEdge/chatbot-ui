@@ -140,6 +140,10 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                     if (response) {
                         if(isStream){
                             // @ts-ignore
+                            let responseIsEnd = false
+                            // response.onEnd(()=>{
+                            //     responseIsEnd = true
+                            // })
                             const reader = response.getReader();
                             const decoder = new TextDecoder();
                             let done = false;
@@ -196,7 +200,9 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                 for (const item of queue) {
                                     const thisWord = queue.shift();
                                     if (!isShowFirst) {
-                                        await delay(Math.random() * (queue.length < 10 ? 500 : 200));
+                                        if(!responseIsEnd){
+                                            await delay(Math.random() * (queue.length < 10 ? 500 : 200));
+                                        }
                                     } else {
                                         isShowFirst = false;
                                     }
@@ -387,11 +393,11 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                 {!(apiKey || api) ? (
                     <div className="mx-auto flex h-full w-[300px] flex-col justify-center space-y-6 sm:w-[600px]">
                         <div className="text-center text-4xl font-bold text-black dark:text-white">
-                            Welcome to Chatbot UI
+                            Welcome to LlamaEdge Chat
                         </div>
                         <div className="text-center text-gray-500 dark:text-gray-400">
                             <div className="mb-2">
-                                Chatbot UI allows you to plug in your API key to use this UI with
+                                LlamaEdge Chat allows you to plug in your API key to use this UI with
                                 their API.
                             </div>
                             <div className="mb-2">
@@ -420,7 +426,9 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                                     <Spinner size="16px" className="mx-auto"/>
                                                 </div>
                                             ) : (
-                                                'Chatbot UI'
+                                                <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
+                                                    <img style={{height:"4rem"}} src="/llamaedge.svg"/>LlamaEdge Chat
+                                                </div>
                                             )}
                                         </div>
 
