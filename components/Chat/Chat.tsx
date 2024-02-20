@@ -138,7 +138,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                     }
 
                     if (response) {
-                        if(isStream){
+                        if (isStream) {
                             // @ts-ignore
                             let responseIsEnd = false
                             // response.onEnd(()=>{
@@ -185,7 +185,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                     if (obj && obj["choices"]) {
                                         obj["choices"].forEach((obj1: { [x: string]: { [x: string]: any; }; }) => {
                                             if (obj1) {
-                                                if (obj1["finish_reason"] && obj1["finish_reason"] !== null) {
+                                                if ((obj1["finish_reason"] && obj1["finish_reason"] !== null) || (obj1["delta"] && obj1["delta"]["content"] && obj1["delta"]["content"] === "data: [DONE]")) {
                                                     done = true;
                                                 } else {
                                                     if (!done && obj1["delta"] && obj1["delta"]["content"]) {
@@ -200,7 +200,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                 for (const item of queue) {
                                     const thisWord = queue.shift();
                                     if (!isShowFirst) {
-                                        if(!responseIsEnd){
+                                        if (!responseIsEnd) {
                                             await delay(Math.random() * (queue.length < 10 ? 500 : 200));
                                         }
                                     } else {
@@ -248,39 +248,39 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                     }
                                 }
                             }
-                        }else {
-                        const data = response.choices[0].message;
-                        const updatedMessages: Message[] = [
-                            ...updatedConversation.messages,
-                            {role: 'assistant', content: data.content},
-                        ];
-                        updatedConversation = {
-                            ...updatedConversation,
-                            messages: updatedMessages,
-                        };
+                        } else {
+                            const data = response.choices[0].message;
+                            const updatedMessages: Message[] = [
+                                ...updatedConversation.messages,
+                                {role: 'assistant', content: data.content},
+                            ];
+                            updatedConversation = {
+                                ...updatedConversation,
+                                messages: updatedMessages,
+                            };
 
-                        homeDispatch({
-                            field: 'selectedConversation',
-                            value: updateConversation,
-                        });
-                        const updatedConversations: Conversation[] = conversations.map(
-                            (conversation) => {
-                                if (conversation.id === selectedConversation.id) {
-                                    return updatedConversation;
-                                }
-                                return conversation;
-                            },
-                        );
-                        if (updatedConversations.length === 0) {
-                            updatedConversations.push(updatedConversation);
-                        }
-                        saveConversations(updatedConversations);
-                        homeDispatch({field: 'loading', value: false});
-                        homeDispatch({field: 'messageIsStreaming', value: false});
-                        homeDispatch({
-                            field: 'selectedConversation',
-                            value: updatedConversation,
-                        });
+                            homeDispatch({
+                                field: 'selectedConversation',
+                                value: updateConversation,
+                            });
+                            const updatedConversations: Conversation[] = conversations.map(
+                                (conversation) => {
+                                    if (conversation.id === selectedConversation.id) {
+                                        return updatedConversation;
+                                    }
+                                    return conversation;
+                                },
+                            );
+                            if (updatedConversations.length === 0) {
+                                updatedConversations.push(updatedConversation);
+                            }
+                            saveConversations(updatedConversations);
+                            homeDispatch({field: 'loading', value: false});
+                            homeDispatch({field: 'messageIsStreaming', value: false});
+                            homeDispatch({
+                                field: 'selectedConversation',
+                                value: updatedConversation,
+                            });
                         }
                     }
                 }
@@ -426,8 +426,12 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                                     <Spinner size="16px" className="mx-auto"/>
                                                 </div>
                                             ) : (
-                                                <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
-                                                    <img style={{height:"4rem"}} src="/llamaedge.svg"/>LlamaEdge Chat
+                                                <div style={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center"
+                                                }}>
+                                                    <img style={{height: "4rem"}} src="/llamaedge.svg"/>LlamaEdge Chat
                                                 </div>
                                             )}
                                         </div>
