@@ -1,12 +1,4 @@
-import {
-    IconArrowDown,
-    IconBolt, IconCircuitSwitchClosed, IconCross, IconCrossFilled, IconCrossOff,
-    IconRepeat,
-    IconSend,
-    IconUpload, IconWorldCancel,
-    IconWorldUpload,
-    IconWriting, IconWritingOff, IconZeppelinOff, IconZzzOff
-} from '@tabler/icons-react';
+import {IconArrowDown, IconBolt, IconRepeat, IconSend, IconUpload, IconWriting} from '@tabler/icons-react';
 import React, {KeyboardEvent, MutableRefObject, useCallback, useContext, useEffect, useRef, useState,} from 'react';
 
 import {useTranslation} from 'next-i18next';
@@ -21,6 +13,7 @@ import {VariableModal} from './VariableModal';
 
 interface Props {
     onSend: (message: Message, plugin: Plugin | null) => void;
+    maxImg: number;
     onRegenerate: () => void;
     onScrollDownClick: () => void;
     stopConversationRef: MutableRefObject<boolean>;
@@ -28,11 +21,11 @@ interface Props {
     showScrollDownButton: boolean;
 }
 
-const maxImg = 1
 
 export const ChatInput = ({
                               onSend,
                               onRegenerate,
+                              maxImg,
                               onScrollDownClick,
                               stopConversationRef,
                               textareaRef,
@@ -40,6 +33,7 @@ export const ChatInput = ({
                           }: Props) => {
     const {t} = useTranslation('chat');
 
+    console.log("maxImg", maxImg)
     const {
         state: {selectedConversation, messageIsStreaming, prompts},
 
@@ -83,6 +77,11 @@ export const ChatInput = ({
     };
 
     const handleSend = () => {
+        let thisList: string[] = imageSrcList
+        if (urlInputShow) {
+            thisList = uploadInput()
+        }
+
         if (messageIsStreaming) {
             return;
         }
@@ -94,14 +93,13 @@ export const ChatInput = ({
 
         let finalContent: string | Content[] = content
 
-        if (imageSrcList.length > 0) {
+        if (thisList.length > 0) {
             finalContent = [{type: 'text', text: content}]
-            imageSrcList.forEach((item) => {
+            thisList.forEach((item) => {
                 if (Array.isArray(finalContent)) {
                     finalContent.push({
                         type: "image_url",
                         image_url: {url: item}
-
                     })
                 }
             })
@@ -292,14 +290,15 @@ export const ChatInput = ({
     };
 
     const addImg = (imageList: string[]) => {
+        let list: string[]
         if (imageSrcList.length + imageList.length <= maxImg) {
-            setImageSrcList((prevImages) => [...prevImages, ...imageList]);
+            list = [...imageSrcList, ...imageList]
         } else {
-            setImageSrcList((prevImages) => {
-                const newList = [...prevImages, ...imageList];
-                return newList.slice(-maxImg);
-            })
+            const newList = [...imageList, ...imageList];
+            list = newList.slice(-maxImg);
         }
+        setImageSrcList(list)
+        return list
     }
 
     const handleImageRemove = (index: number) => {
@@ -309,6 +308,16 @@ export const ChatInput = ({
             return newImages;
         });
     };
+
+    const uploadInput = () => {
+        let list: string[] = []
+        setUrlInputShow(false)
+        if (inputUrl) {
+            list = addImg([inputUrl])
+            setInputUrl("")
+        }
+        return list
+    }
 
     return (
         <div
@@ -323,31 +332,32 @@ export const ChatInput = ({
             <div className="lg:mx-auto lg:max-w-3xl mx-2 md:mx-4 mt-4 md:mt-[52px] ">
                 <div className={"flex justify-start" + (imageSrcList.length > 0 ? " mt-4" : "")}>
                     <div
-                        className="flex items-center p-2 mx-2 sm:mx-4 w-full rounded-t-md bg-white border-black/10 dark:border-gray-900/50 dark:bg-[#40414f] border-t border-x">
-                        <button title="upload image file(coming soon)" disabled className="cursor-not-allowed p-2 mr-2 dark:bg-[#343541] rounded-lg" onClick={() => {
-                            document.getElementById("upload-button")?.click()
-                        }}>
-                            <IconUpload size={18}/>
+                        className="text-black flex items-center p-2 mx-2 sm:mx-4 w-full rounded-t-md bg-white border-black/10 dark:text-white dark:border-gray-900/50 dark:bg-[#40414f] border-t border-x">
+                        <button title="upload image file(coming soon)" disabled={true || maxImg === 0}
+                                className={"p-2 mr-2 bg-[#ececec] dark:bg-[#343541] rounded-lg" + (true || maxImg === 0 ? " cursor-not-allowed" : "")}
+                                onClick={() => {
+                                    document.getElementById("upload-button")?.click()
+                                }}>
+                            <IconUpload size={20}/>
                         </button>
                         {urlInputShow ? <>
                             <input onChange={(e) => {
                                 setInputUrl(e.target.value)
-                            }} id="imgUrlInputBox" autoFocus style={{height: "2.125rem"}}
-                                   className="px-2 h-full dark:bg-[#343541] rounded-l-lg"/>
-                            <button title="upload" className="p-2 dark:bg-[#343541] rounded-r-lg" onClick={() => {
-                                setUrlInputShow(false)
-                                if (inputUrl) {
-                                    addImg([inputUrl])
-                                    setInputUrl("")
-                                }
-                            }}>
-                                {inputUrl ? <IconWorldUpload size={18}/> : <IconWritingOff size={18}/>}
+                            }} id="imgUrlInputBox" autoFocus style={{height: "2.25rem"}}
+                                   className="px-2 h-full bg-[#ececec] dark:bg-[#343541] rounded-l-lg"/>
+                            <button title="upload" className="p-2 bg-[#ececec] dark:bg-[#343541] rounded-r-lg" onClick={uploadInput}>
+                                {inputUrl ? "Upload" : "Close"}
                             </button>
-                        </> : <button title="Upload images by entering the url" className="p-2 dark:bg-[#343541] rounded-lg" onClick={() => {
-                            setUrlInputShow(true)
-                        }}>
-                            <IconWriting size={18}/>
+                        </> : <button disabled={maxImg === 0} title="Upload images by entering the url"
+                                      className={"p-2 bg-[#ececec] dark:bg-[#343541] rounded-lg" + (maxImg === 0 ? " cursor-not-allowed" : "")}
+                                      onClick={() => {
+                                          setUrlInputShow(true)
+                                      }}>
+                            <IconWriting size={20}/>
                         </button>}
+                        <div className={"ml-4 " + (maxImg === 0 ? "block" : "hidden")}>For Llava series models, submit
+                            an image URL for processing.
+                        </div>
                     </div>
                 </div>
             </div>

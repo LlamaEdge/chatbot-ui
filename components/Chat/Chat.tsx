@@ -26,6 +26,8 @@ interface Props {
 export const Chat = memo(({stopConversationRef}: Props) => {
         const {t} = useTranslation('chat');
 
+        const maxImg = 1
+
         const {
             state: {
                 selectedConversation,
@@ -45,6 +47,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
         } = useContext(HomeContext);
 
         const [currentMessage, setCurrentMessage] = useState<Message>();
+        const [imageCount, setImageCount] = useState<number>(0);
         const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
         const [showSettings, setShowSettings] = useState<boolean>(false);
         const [showScrollDownButton, setShowScrollDownButton] =
@@ -358,10 +361,25 @@ export const Chat = memo(({stopConversationRef}: Props) => {
 
         useEffect(() => {
             throttledScrollDown();
-            selectedConversation &&
-            setCurrentMessage(
-                selectedConversation.messages[selectedConversation.messages.length - 2],
-            );
+            if (selectedConversation) {
+                setImageCount(selectedConversation?.messages.reduce((total, currentItem) => {
+                    if (Array.isArray(currentItem.content)) {
+                        total += currentItem.content.reduce((acc, item) => {
+                            if (item.type === "image_url" && item["image_url"]) {
+                                console.log(item)
+                                acc++;
+                            }
+                            console.log(item)
+                            return acc;
+                        }, 0);
+                    }
+                    console.log(total)
+                    return total;
+                }, 0))
+                setCurrentMessage(
+                    selectedConversation.messages[selectedConversation.messages.length - 2],
+                );
+            }
         }, [selectedConversation, throttledScrollDown]);
 
         useEffect(() => {
@@ -499,6 +517,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                             key={index}
                                             message={message}
                                             messageIndex={index}
+                                            maxImg={maxImg - imageCount}
                                             onEdit={(editedMessage) => {
                                                 setCurrentMessage(editedMessage);
                                                 // discard edited message and the ones that come after then resend
@@ -520,6 +539,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                             )}
                         </div>
                         {(selectedConversation?.promptState !== 1 || selectedConversation?.prompt !== "") && <ChatInput
+                            maxImg={maxImg - imageCount}
                             stopConversationRef={stopConversationRef}
                             textareaRef={textareaRef}
                             onSend={(message, plugin) => {

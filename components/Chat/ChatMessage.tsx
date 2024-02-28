@@ -18,13 +18,12 @@ import remarkMath from 'remark-math';
 
 export interface Props {
     message: Message;
+    maxImg: number;
     messageIndex: number;
     onEdit?: (editedMessage: Message) => void
 }
 
-const maxImg = 1
-
-export const ChatMessage: FC<Props> = memo(({message, messageIndex, onEdit}) => {
+export const ChatMessage: FC<Props> = memo(({message, maxImg, messageIndex, onEdit}) => {
     const {t} = useTranslation('chat');
 
     const {
