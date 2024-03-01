@@ -1,4 +1,4 @@
-import {IconCheck, IconCopy, IconEdit, IconRobot, IconTrash, IconUser,} from '@tabler/icons-react';
+import {IconCheck, IconCopy, IconEdit, IconRefresh, IconRobot, IconTrash, IconUser,} from '@tabler/icons-react';
 import React, {FC, memo, useContext, useEffect, useRef, useState} from 'react';
 
 import {useTranslation} from 'next-i18next';
@@ -20,10 +20,11 @@ export interface Props {
     message: Message;
     maxImg: number;
     messageIndex: number;
-    onEdit?: (editedMessage: Message) => void
+    onEdit?: (editedMessage: Message) => void,
+    onRegenerate: () => void;
 }
 
-export const ChatMessage: FC<Props> = memo(({message, maxImg, messageIndex, onEdit}) => {
+export const ChatMessage: FC<Props> = memo(({message, maxImg, messageIndex, onRegenerate, onEdit}) => {
     const {t} = useTranslation('chat');
 
     const {
@@ -177,7 +178,6 @@ export const ChatMessage: FC<Props> = memo(({message, maxImg, messageIndex, onEd
 
     const addImg = (imageList: string[]) => {
         if (messageImageList.length + imageList.length <= maxImg) {
-            console.log(imageList)
             setMessageImageList((prevImages) => [...prevImages, ...imageList]);
         } else {
             setMessageImageList((prevImages) => {
@@ -451,9 +451,14 @@ export const ChatMessage: FC<Props> = memo(({message, maxImg, messageIndex, onEd
                                     messageIsStreaming && messageIndex == (selectedConversation?.messages.length ?? 0) - 1 ? '`▍`' : ''
                                 }`}
                             </MemoizedReactMarkdown>
-
                             <div
                                 className="md:-mr-8 ml-1 md:ml-0 flex flex-col md:flex-row gap-4 md:gap-1 items-center md:items-start justify-end md:justify-start">
+                                <button
+                                    className="invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                                    onClick={onRegenerate}
+                                >
+                                    <IconRefresh size={20}/>
+                                </button>
                                 {messagedCopied ? (
                                     <IconCheck
                                         size={20}

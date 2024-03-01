@@ -366,14 +366,11 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                     if (Array.isArray(currentItem.content)) {
                         total += currentItem.content.reduce((acc, item) => {
                             if (item.type === "image_url" && item["image_url"]) {
-                                console.log(item)
                                 acc++;
                             }
-                            console.log(item)
                             return acc;
                         }, 0);
                     }
-                    console.log(total)
                     return total;
                 }, 0))
                 setCurrentMessage(
@@ -512,12 +509,17 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                         </div>
                                     )}
 
-                                    {selectedConversation?.messages && selectedConversation?.messages.map((message, index) => (
+                                    {selectedConversation?.messages && selectedConversation.messages.map((message, index) => (
                                         <MemoizedChatMessage
                                             key={index}
                                             message={message}
                                             messageIndex={index}
                                             maxImg={maxImg - imageCount}
+                                            onRegenerate={() => {
+                                                if (currentMessage) {
+                                                    handleSend(currentMessage, selectedConversation.messages.length - index + 1, null);
+                                                }
+                                            }}
                                             onEdit={(editedMessage) => {
                                                 setCurrentMessage(editedMessage);
                                                 // discard edited message and the ones that come after then resend

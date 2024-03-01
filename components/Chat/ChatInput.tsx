@@ -33,7 +33,6 @@ export const ChatInput = ({
                           }: Props) => {
     const {t} = useTranslation('chat');
 
-    console.log("maxImg", maxImg)
     const {
         state: {selectedConversation, messageIsStreaming, prompts},
 
@@ -346,7 +345,7 @@ export const ChatInput = ({
                             }} id="imgUrlInputBox" autoFocus style={{height: "2.25rem"}}
                                    className="px-2 h-full bg-[#ececec] dark:bg-[#343541] rounded-l-lg"/>
                             <button title="upload" className="p-2 bg-[#ececec] dark:bg-[#343541] rounded-r-lg" onClick={uploadInput}>
-                                {inputUrl ? "Upload" : "Close"}
+                                {inputUrl ? "Submit" : "Close"}
                             </button>
                         </> : <button disabled={maxImg === 0} title="Upload images by entering the url"
                                       className={"p-2 bg-[#ececec] dark:bg-[#343541] rounded-lg" + (maxImg === 0 ? " cursor-not-allowed" : "")}
@@ -355,8 +354,8 @@ export const ChatInput = ({
                                       }}>
                             <IconWriting size={20}/>
                         </button>}
-                        <div className={"ml-4 " + (maxImg === 0 ? "block" : "hidden")}>For Llava series models, submit
-                            an image URL for processing.
+                        <div className={"ml-4 " + (maxImg === 0 ? "block" : "hidden")}>
+                            For Llava series models, please submit an image URL for processing first.
                         </div>
                     </div>
                 </div>
@@ -372,16 +371,16 @@ export const ChatInput = ({
                 {/*  </button>*/}
                 {/*)}*/}
 
-                {!messageIsStreaming &&
-                    selectedConversation &&
-                    selectedConversation.messages.length > 0 && (
-                        <button
-                            className="absolute top-0 left-0 right-0 mx-auto mb-3 flex w-fit items-center gap-3 rounded border border-neutral-200 bg-white py-2 px-4 text-black hover:opacity-50 dark:border-neutral-600 dark:bg-[#343541] dark:text-white md:mb-0 md:mt-2"
-                            onClick={onRegenerate}
-                        >
-                            <IconRepeat size={16}/> {t('Regenerate response')}
-                        </button>
-                    )}
+                {/*{!messageIsStreaming &&*/}
+                {/*    selectedConversation &&*/}
+                {/*    selectedConversation.messages.length > 0 && (*/}
+                {/*        <button*/}
+                {/*            className="absolute top-0 left-0 right-0 mx-auto mb-3 flex w-fit items-center gap-3 rounded border border-neutral-200 bg-white py-2 px-4 text-black hover:opacity-50 dark:border-neutral-600 dark:bg-[#343541] dark:text-white md:mb-0 md:mt-2"*/}
+                {/*            onClick={onRegenerate}*/}
+                {/*        >*/}
+                {/*            <IconRepeat size={16}/> {t('Regenerate response')}*/}
+                {/*        </button>*/}
+                    {/*)}*/}
 
                 <div
                     className="relative mx-2 flex w-full flex-grow flex-col rounded-b-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4">
