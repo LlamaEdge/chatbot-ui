@@ -4,7 +4,7 @@ import {memo, MutableRefObject, useCallback, useContext, useEffect, useRef, useS
 import {useTranslation} from 'next-i18next';
 import {throttle} from '@/utils/data/throttle';
 
-import {saveConversations, updateConversation,} from '@/utils/app/conversation';
+import {saveConversation, saveConversations, updateConversation} from '@/utils/app/conversation';
 import {ChatBody, Conversation, Message} from '@/types/chat';
 import {Plugin} from '@/types/plugin';
 
@@ -240,10 +240,24 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                             ...updatedConversation,
                                             messages: updatedMessages,
                                         };
+                                        saveConversation(updatedConversation);
                                         homeDispatch({
                                             field: 'selectedConversation',
                                             value: updatedConversation,
                                         });
+                                        const updatedConversations: Conversation[] = conversations.map(
+                                            (conversation) => {
+                                                if (conversation.id === selectedConversation.id) {
+                                                    return updatedConversation;
+                                                }
+                                                return conversation;
+                                            },
+                                        );
+                                        if (updatedConversations.length === 0) {
+                                            updatedConversations.push(updatedConversation);
+                                        }
+                                        homeDispatch({ field: 'conversations', value: updatedConversations });
+                                        saveConversations(updatedConversations);
                                     }
                                     if (done && queue.length === 0) {
                                         homeDispatch({field: 'messageIsStreaming', value: false});
@@ -261,11 +275,13 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                 ...updatedConversation,
                                 messages: updatedMessages,
                             };
+                            console.log("updatedMessages")
 
                             homeDispatch({
                                 field: 'selectedConversation',
                                 value: updateConversation,
                             });
+                            saveConversation(updatedConversation);
                             const updatedConversations: Conversation[] = conversations.map(
                                 (conversation) => {
                                     if (conversation.id === selectedConversation.id) {
@@ -277,6 +293,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                             if (updatedConversations.length === 0) {
                                 updatedConversations.push(updatedConversation);
                             }
+                            homeDispatch({ field: 'conversations', value: updatedConversations });
                             saveConversations(updatedConversations);
                             homeDispatch({field: 'loading', value: false});
                             homeDispatch({field: 'messageIsStreaming', value: false});

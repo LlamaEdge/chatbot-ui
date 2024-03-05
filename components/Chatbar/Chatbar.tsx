@@ -244,6 +244,7 @@ export const Chatbar = () => {
             <Sidebar<Conversation>
                 side={'left'}
                 isOpen={showChatbar}
+                canCreateChat={models && models.length > 0}
                 addItemButtonTitle={t('New chat')}
                 itemComponent={<Conversations conversations={filteredConversations}/>}
                 folderComponent={<ChatFolders searchTerm={searchTerm}/>}
