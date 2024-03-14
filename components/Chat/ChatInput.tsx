@@ -1,4 +1,4 @@
-import {IconArrowDown, IconBolt, IconRepeat, IconSend, IconUpload, IconWriting} from '@tabler/icons-react';
+import {IconArrowDown, IconBolt, IconSend, IconUpload, IconWriting} from '@tabler/icons-react';
 import React, {KeyboardEvent, MutableRefObject, useCallback, useContext, useEffect, useRef, useState,} from 'react';
 
 import {useTranslation} from 'next-i18next';
@@ -332,8 +332,8 @@ export const ChatInput = ({
                 <div className={"flex justify-start" + (imageSrcList.length > 0 ? " mt-4" : "")}>
                     <div
                         className="text-black flex items-center p-2 mx-2 sm:mx-4 w-full rounded-t-md bg-white border-black/10 dark:text-white dark:border-gray-900/50 dark:bg-[#40414f] border-t border-x">
-                        <button title="upload image file(coming soon)" disabled={true || maxImg === 0}
-                                className={"p-2 mr-2 bg-[#ececec] dark:bg-[#343541] rounded-lg" + (true || maxImg === 0 ? " cursor-not-allowed" : "")}
+                        <button title="upload image file(coming soon)" disabled={maxImg === 0}
+                                className={"p-2 mr-2 bg-[#ececec] dark:bg-[#343541] rounded-lg" + (maxImg === 0 ? " cursor-not-allowed" : "")}
                                 onClick={() => {
                                     document.getElementById("upload-button")?.click()
                                 }}>
@@ -344,7 +344,8 @@ export const ChatInput = ({
                                 setInputUrl(e.target.value)
                             }} id="imgUrlInputBox" autoFocus style={{height: "2.25rem"}}
                                    className="px-2 h-full bg-[#ececec] dark:bg-[#343541] rounded-l-lg"/>
-                            <button title="upload" className="p-2 bg-[#ececec] dark:bg-[#343541] rounded-r-lg" onClick={uploadInput}>
+                            <button title="upload" className="p-2 bg-[#ececec] dark:bg-[#343541] rounded-r-lg"
+                                    onClick={uploadInput}>
                                 {inputUrl ? "Submit" : "Close"}
                             </button>
                         </> : <button disabled={maxImg === 0} title="Upload images by entering the url"
@@ -380,7 +381,7 @@ export const ChatInput = ({
                 {/*        >*/}
                 {/*            <IconRepeat size={16}/> {t('Regenerate response')}*/}
                 {/*        </button>*/}
-                    {/*)}*/}
+                {/*)}*/}
 
                 <div
                     className="relative mx-2 flex w-full flex-grow flex-col rounded-b-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4">

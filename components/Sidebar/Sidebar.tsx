@@ -53,8 +53,6 @@ const Sidebar = <T, >({
         e.target.style.background = 'none';
     };
 
-    console.log(canCreateChat)
-
     return isOpen ? (
         <div>
             <div
