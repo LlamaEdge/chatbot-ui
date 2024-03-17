@@ -1,8 +1,6 @@
 import {Message} from '@/types/chat';
 import {OpenAIModel} from '@/types/openai';
 
-import {OPENAI_API_TYPE} from '../app/const';
-
 export class OpenAIError extends Error {
     type: string;
     param: string;
@@ -25,7 +23,19 @@ export const ChatStream = async (
     key: string,
     messages: Message[]
 ) => {
+    let finalMessage
     let queryUrl = `${api}/v1/chat/completions`;
+    if (systemPrompt) {
+        finalMessage = [
+            {
+                role: 'system',
+                content: systemPrompt,
+            },
+            ...messages
+        ]
+    } else {
+        finalMessage = messages;
+    }
     const res = await fetch(queryUrl, {
         headers: {
             'accept': "application/json",
@@ -34,13 +44,7 @@ export const ChatStream = async (
         method: 'POST',
         body: JSON.stringify({
             model: model.id,
-            messages: [
-                {
-                    role: 'system',
-                    content: systemPrompt,
-                },
-                ...messages,
-            ],
+            messages: finalMessage,
             stream: true
         }),
     });
