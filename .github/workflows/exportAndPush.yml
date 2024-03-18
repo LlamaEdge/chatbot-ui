@@ -1,0 +1,70 @@
+name: Release
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      checks: write
+      contents: write
+      deployments: write
+      issues: write
+      packages: write
+      pull-requests: write
+      repository-projects: write
+      security-events: write
+      statuses: write
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - name: Install Dependencies
+        run: |
+          yarn
+      - name: Build Project
+        run: |
+          yarn build
+          yarn next export
+      - name: Clone target repository
+          uses: actions/checkout@v2
+          with:
+            repository: GaiaNet-AI/gaianet-node
+
+      - name: Copy build files
+          run: cp -r ./out/* ./path/to/gaianet-node/dashboard/chatbot-ui/
+
+      - name: Commit and push changes
+          run: |
+            cd ./path/to/gaianet-node
+            git config --local user.email "juyichen0413@gmail.com"
+            git config --local user.name "Gaianet worker"
+            git add .
+            git commit -m "Build and deploy chatbot-ui"
+            git push
+#      - name: Rename and zip Export
+#        run: |
+#          mv out chatbot-ui
+#          tar czvf chatbot-ui.tar.gz chatbot-ui
+#      - name: Create Release
+#        id: create_release
+#        uses: actions/create-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
+#        with:
+#          tag_name: ${{ github.ref }}
+#          release_name: Release ${{ github.ref }}
+#      - name: Upload Release Asset
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
+#        with:
+#          upload_url: ${{ steps.create_release.outputs.upload_url }}
+#          asset_path: ./chatbot-ui.tar.gz
+#          asset_name: chatbot-ui.tar.gz
+#          asset_content_type: application/zip
