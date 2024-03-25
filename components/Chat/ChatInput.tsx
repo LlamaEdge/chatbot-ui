@@ -355,8 +355,8 @@ export const ChatInput = ({
                                       }}>
                             <IconWriting size={20}/>
                         </button>}
-                        <div className={"ml-4 " + (maxImg === 0 ? "block" : "hidden")}>
-                            For Llava series models, please submit an image URL for processing first.
+                        <div className={"ml-4 " + (maxImg === 0 ? "hidden" : "block")}>
+                            For Llava series models, please submit an image URL or upload an image.
                         </div>
                     </div>
                 </div>
