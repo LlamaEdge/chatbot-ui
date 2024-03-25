@@ -332,7 +332,7 @@ export const ChatInput = ({
                 <div className={"flex justify-start" + (imageSrcList.length > 0 ? " mt-4" : "")}>
                     <div
                         className="text-black flex items-center p-2 mx-2 sm:mx-4 w-full rounded-t-md bg-white border-black/10 dark:text-white dark:border-gray-900/50 dark:bg-[#40414f] border-t border-x">
-                        <button title="upload image file(coming soon)" disabled={maxImg === 0}
+                        <button title="upload image file" disabled={maxImg === 0}
                                 className={"p-2 mr-2 bg-[#ececec] dark:bg-[#343541] rounded-lg" + (maxImg === 0 ? " cursor-not-allowed" : "")}
                                 onClick={() => {
                                     document.getElementById("upload-button")?.click()
