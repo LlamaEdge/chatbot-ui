@@ -2,8 +2,6 @@ import {FC, KeyboardEvent, useCallback, useEffect, useRef, useState,} from 'reac
 
 import {useTranslation} from 'next-i18next';
 
-import {DEFAULT_SYSTEM_PROMPT} from '@/utils/app/const';
-
 import {Conversation} from '@/types/chat';
 import {Prompt} from '@/types/prompt';
 
