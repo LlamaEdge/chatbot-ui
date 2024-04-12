@@ -57,10 +57,10 @@ export const Chat = memo(({stopConversationRef}: Props) => {
         const chatContainerRef = useRef<HTMLDivElement>(null);
         const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-        let textList: string[] = [];
+        const textListRef = useRef<string[]>([]);
         let text: string = "";
         let isFirst: boolean = true;
-        let queryDone: boolean = false;
+        const queryDoneRef = useRef(false);
         let showDone: boolean = true;
         let updatedConversation: Conversation;
 
@@ -70,10 +70,10 @@ export const Chat = memo(({stopConversationRef}: Props) => {
         }
 
         async function showText() {
-            if (showDone && selectedConversation && textList.length > 0) {
+            if (showDone && selectedConversation && textListRef.current.length > 0) {
                 showDone = false;
-                for (let i = 0; i < textList.length; i++) {
-                    text += textList.shift();
+                for (let i = 0; i < textListRef.current.length; i++) {
+                    text += textListRef.current.shift();
                     text = text.replace(/<\|.*?\|>/g, "")
                     if (isFirst) {
                         isFirst = false;
@@ -126,14 +126,24 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                             value: updatedConversations
                         });
                         saveConversations(updatedConversations);
-                        if (queryDone) {
-                            await delay(50)
+                        if (!queryDoneRef.current) {
+                            await delay(textListRef.current.length > 10 ? 300 : 100)
                         } else {
-                            await delay(textList.length > 10 ? 300 : 100)
+                            await delay(20)
                         }
                     }
                 }
                 showDone = true;
+            }
+        }
+
+        const whileShowText = async () => {
+            while (textListRef.current.length !== 0) {
+                if (textListRef.current.length > 0) {
+                    console.log(textListRef.current)
+                    console.log("show")
+                }
+                await showText();
             }
         }
 
@@ -214,10 +224,11 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                 let notFinishData = "";
                                 const decoder = new TextDecoder();
                                 const reader = response.getReader();
-                                while (!queryDone || textList.length > 0) {
+                                while (!queryDoneRef.current) {
                                     const {value, done} = await reader.read();
                                     if (done) {
-                                        queryDone = true;
+                                        console.log("done-221")
+                                        queryDoneRef.current = true;
                                     }
                                     let chunkValue = decoder.decode(value);
                                     if (chunkValue) {
@@ -229,7 +240,8 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                                 part = part.substring(6).trim();
                                             }
                                             if (part === "[DONE]") {
-                                                queryDone = true;
+                                                console.log("done-234")
+                                                queryDoneRef.current = true;
                                             } else {
                                                 if (!part.startsWith('{')) {
                                                     if (notFinishData) {
@@ -244,15 +256,17 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                                 }
                                             }
 
-                                            if (!isError && !queryDone) {
+                                            if (!isError && !queryDoneRef.current) {
                                                 try {
                                                     if (part) {
                                                         const obj = JSON.parse(part)
                                                         if (obj && obj["choices"]) {
-                                                            obj["choices"].forEach((obj1: { [x: string]: { [x: string]: any; }; }) => {
+                                                            obj["choices"].forEach((obj1: {
+                                                                [x: string]: { [x: string]: any; };
+                                                            }) => {
                                                                 if (obj1) {
                                                                     if (obj1["delta"] && obj1["delta"]["content"]) {
-                                                                        textList.push(obj1["delta"]["content"]);
+                                                                        textListRef.current.push(obj1["delta"]["content"]);
                                                                     }
                                                                 }
                                                             })
@@ -265,7 +279,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                         });
                                     }
                                     if (showDone) {
-                                        await showText();
+                                        whileShowText();
                                     }
                                 }
                                 homeDispatch({field: 'messageIsStreaming', value: false});
@@ -316,7 +330,6 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                     } catch (error) {
                         console.error(error);
                     }
-
                 }
             },
             [
