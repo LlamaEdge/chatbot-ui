@@ -18,7 +18,7 @@ import {getSettings} from '@/utils/app/settings';
 import {Conversation} from '@/types/chat';
 import {KeyValuePair} from '@/types/data';
 import {FolderInterface, FolderType} from '@/types/folder';
-import {fallbackModelID, OpenAIModelID} from '@/types/openai';
+import {fallbackModelID, OpenAIModel, OpenAIModelID} from '@/types/openai';
 import {Prompt} from '@/types/prompt';
 
 import {Chat} from '@/components/Chat/Chat';
@@ -181,14 +181,24 @@ const Home = ({
 
     // CONVERSATION OPERATIONS  --------------------------------------------
 
-    const handleNewConversation = () => {
+    function checkObjectExistence(objectList: OpenAIModel[], object: OpenAIModel): boolean {
+        for (let obj of objectList) {
+            if (obj.id === object.id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const handleNewConversation = async () => {
+        await getData()
         const lastConversation = conversations[conversations.length - 1];
         if (models && models.length > 0) {
             const newConversation: Conversation = {
                 id: uuidv4(),
                 name: t('New Conversation'),
                 messages: [],
-                model: lastConversation?.model || models[0],
+                model: (lastConversation?.model && checkObjectExistence(models, lastConversation?.model) && lastConversation?.model) || models[0],
                 prompt: promptsList.find(prompt =>
                     prompt.id?.toLowerCase() === models[0].name?.toLowerCase()
                 )?.content || "",

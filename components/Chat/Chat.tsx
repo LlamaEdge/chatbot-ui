@@ -129,7 +129,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                         if (!queryDoneRef.current) {
                             await delay(textListRef.current.length > 10 ? 300 : 100)
                         } else {
-                            await delay(20)
+                            // await delay(20)
                         }
                     }
                 }
@@ -139,10 +139,6 @@ export const Chat = memo(({stopConversationRef}: Props) => {
 
         const whileShowText = async () => {
             while (textListRef.current.length !== 0) {
-                if (textListRef.current.length > 0) {
-                    console.log(textListRef.current)
-                    console.log("show")
-                }
                 await showText();
             }
         }
@@ -219,6 +215,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                             messagesToSend = [message, ...messagesToSend];
                         }
                         if (isStream) {
+                            queryDoneRef.current = false;
                             let response: ReadableStream<Uint8Array> | null = await ChatStream(model, promptToSend, temperatureToUse, api, key, messagesToSend);
                             if (response) {
                                 let notFinishData = "";
@@ -227,7 +224,6 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                 while (!queryDoneRef.current) {
                                     const {value, done} = await reader.read();
                                     if (done) {
-                                        console.log("done-221")
                                         queryDoneRef.current = true;
                                     }
                                     let chunkValue = decoder.decode(value);
@@ -240,7 +236,6 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                                 part = part.substring(6).trim();
                                             }
                                             if (part === "[DONE]") {
-                                                console.log("done-234")
                                                 queryDoneRef.current = true;
                                             } else {
                                                 if (!part.startsWith('{')) {
