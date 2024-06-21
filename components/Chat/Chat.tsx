@@ -59,6 +59,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
 
         const textListRef = useRef<string[]>([]);
         let text: string = "";
+        let textTime = 0;
         let isFirst: boolean = true;
         const queryDoneRef = useRef(false);
         let showDone: boolean = true;
@@ -127,7 +128,8 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                         });
                         saveConversations(updatedConversations);
                         if (!queryDoneRef.current) {
-                            await delay(textListRef.current.length > 10 ? 300 : 100)
+                            // console.log("textTime",textTime)
+                            // await delay(textTime)
                         } else {
                             // await delay(20)
                         }
@@ -216,6 +218,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                         }
                         if (isStream) {
                             queryDoneRef.current = false;
+                            let lastTime = new Date().getTime();
                             let response: ReadableStream<Uint8Array> | null = await ChatStream(model, promptToSend, temperatureToUse, api, key, messagesToSend);
                             if (response) {
                                 let notFinishData = "";
@@ -229,6 +232,9 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                     let chunkValue = decoder.decode(value);
                                     if (chunkValue) {
                                         const parts = chunkValue.split('\n\n');
+                                        const now = new Date().getTime();
+                                        textTime = (now - lastTime) / parts.length;
+                                        lastTime = now;
                                         parts.forEach(part => {
                                             let isError = false
                                             part = part.trim();
