@@ -41,6 +41,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                 modelError,
                 loading,
                 prompts,
+                controller
             },
             handleUpdateConversation,
             dispatch: homeDispatch,
@@ -219,7 +220,9 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                         if (isStream) {
                             queryDoneRef.current = false;
                             let lastTime = new Date().getTime();
-                            let response: ReadableStream<Uint8Array> | null = await ChatStream(model, promptToSend, temperatureToUse, api, key, messagesToSend);
+                            const abortController = new AbortController();
+                            homeDispatch({field: 'controller', value: abortController});
+                            let response: ReadableStream<Uint8Array> | null = await ChatStream(model, promptToSend, temperatureToUse, api, key, messagesToSend, abortController);
                             if (response) {
                                 let notFinishData = "";
                                 const decoder = new TextDecoder();

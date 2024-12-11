@@ -1,4 +1,4 @@
-import {IconArrowDown, IconBolt, IconSend, IconUpload, IconWriting} from '@tabler/icons-react';
+import {IconArrowDown, IconBolt, IconSend, IconSendOff, IconUpload, IconWriting} from '@tabler/icons-react';
 import React, {KeyboardEvent, MutableRefObject, useCallback, useContext, useEffect, useRef, useState,} from 'react';
 
 import {useTranslation} from 'next-i18next';
@@ -34,7 +34,7 @@ export const ChatInput = ({
     const {t} = useTranslation('chat');
 
     const {
-        state: {selectedConversation, messageIsStreaming, prompts},
+        state: {selectedConversation, messageIsStreaming, prompts, controller},
 
         dispatch: homeDispatch,
     } = useContext(HomeContext);
@@ -74,6 +74,13 @@ export const ChatInput = ({
         setContent(value);
         updatePromptListVisibility(value);
     };
+
+    const stopSend = () => {
+        if (messageIsStreaming && controller) {
+            controller.abort();
+            homeDispatch({field: 'messageIsStreaming', value: false});
+        }
+    }
 
     const handleSend = () => {
         let thisList: string[] = imageSrcList
@@ -448,11 +455,10 @@ export const ChatInput = ({
 
                     <button
                         className="absolute right-2 top-2 rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-opacity-50 dark:text-neutral-100 dark:hover:text-neutral-200"
-                        onClick={handleSend}
+                        onClick={messageIsStreaming ? stopSend : handleSend}
                     >
                         {messageIsStreaming ? (
-                            <div
-                                className="h-4 w-4 animate-spin rounded-full border-t-2 border-neutral-800 opacity-60 dark:border-neutral-100"></div>
+                            <IconSendOff size={18}/>
                         ) : (
                             <IconSend size={18}/>
                         )}
