@@ -1,4 +1,12 @@
-import {IconArrowDown, IconBolt, IconSend, IconSendOff, IconUpload, IconWriting} from '@tabler/icons-react';
+import {
+    IconArrowDown,
+    IconBolt,
+    IconCircleSquare,
+    IconSend,
+    IconSendOff,
+    IconUpload,
+    IconWriting
+} from '@tabler/icons-react';
 import React, {KeyboardEvent, MutableRefObject, useCallback, useContext, useEffect, useRef, useState,} from 'react';
 
 import {useTranslation} from 'next-i18next';
@@ -458,7 +466,7 @@ export const ChatInput = ({
                         onClick={messageIsStreaming ? stopSend : handleSend}
                     >
                         {messageIsStreaming ? (
-                            <IconSendOff size={18}/>
+                            <IconCircleSquare size={18}/>
                         ) : (
                             <IconSend size={18}/>
                         )}
