@@ -439,18 +439,18 @@
   dependencies:
     tslib "^2.4.0"
 
-"@tabler/icons-react@^2.9.0":
-  version "2.10.0"
-  resolved "https://registry.npmjs.org/@tabler/icons-react/-/icons-react-2.10.0.tgz"
-  integrity sha512-cWJPhPv7QG89OByVaMc3cs0mY9yIHf4ctoRrjQ4+uXjna2xx0SkwfXAtgt8UhRnp/b47Pr3h59P8Vojw49d2jA==
+"@tabler/icons-react@^2.47.0":
+  version "2.47.0"
+  resolved "https://registry.npmmirror.com/@tabler/icons-react/-/icons-react-2.47.0.tgz"
+  integrity sha512-iqly2FvCF/qUbgmvS8E40rVeYY7laltc5GUjRxQj59DuX0x/6CpKHTXt86YlI2whg4czvd/c8Ce8YR08uEku0g==
   dependencies:
-    "@tabler/icons" "2.10.0"
+    "@tabler/icons" "2.47.0"
     prop-types "^15.7.2"
 
-"@tabler/icons@2.10.0":
-  version "2.10.0"
-  resolved "https://registry.npmjs.org/@tabler/icons/-/icons-2.10.0.tgz"
-  integrity sha512-rj9xrHTSw7bPpylx8g9xhhUgO9NYKX1wGnGrMaFS5CQ9KS+jhwhKFqbZaQKhXNhpvI0cLEEW6GaRXdrC3iBs1A==
+"@tabler/icons@2.47.0":
+  version "2.47.0"
+  resolved "https://registry.npmmirror.com/@tabler/icons/-/icons-2.47.0.tgz"
+  integrity sha512-4w5evLh+7FUUiA1GucvGj2ReX2TvOjEr4ejXdwL/bsjoSkof6r1gQmzqI+VHrE2CpJpB3al7bCTulOkFa/RcyA==
 
 "@tailwindcss/typography@^0.5.9":
   version "0.5.9"

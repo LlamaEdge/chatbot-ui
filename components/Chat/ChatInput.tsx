@@ -1,12 +1,4 @@
-import {
-    IconArrowDown,
-    IconBolt,
-    IconCircleSquare,
-    IconSend,
-    IconSendOff,
-    IconUpload,
-    IconWriting
-} from '@tabler/icons-react';
+import {IconArrowDown, IconBolt, IconSend, IconUpload, IconWriting} from '@tabler/icons-react';
 import React, {KeyboardEvent, MutableRefObject, useCallback, useContext, useEffect, useRef, useState,} from 'react';
 
 import {useTranslation} from 'next-i18next';
@@ -466,16 +458,22 @@ export const ChatInput = ({
                         onClick={messageIsStreaming ? stopSend : handleSend}
                     >
                         {messageIsStreaming ? (
-                            <IconCircleSquare size={18}/>
-                        ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                     fill="currentColor"
+                                     className="icon icon-tabler icons-tabler-filled icon-tabler-circle-rectangle">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path
+                                        d="M17 3.34a10 10 0 1 1 -15 8.66l.005 -.324a10 10 0 0 1 14.995 -8.336m0 5.66h-10a1 1 0 0 0 -1 1v4a1 1 0 0 0 1 1h10a1 1 0 0 0 1 -1v-4a1 1 0 0 0 -1 -1"/>
+                                </svg>
+                            ) : (
                             <IconSend size={18}/>
-                        )}
-                    </button>
+                    )}
+                </button>
 
-                    {showScrollDownButton && (
-                        <div className="absolute bottom-12 right-0 lg:bottom-0 lg:-right-10">
-                            <button
-                                className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-300 text-gray-800 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-neutral-200"
+                {showScrollDownButton && (
+                    <div className="absolute bottom-12 right-0 lg:bottom-0 lg:-right-10">
+                        <button
+                            className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-300 text-gray-800 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-neutral-200"
                                 onClick={onScrollDownClick}
                             >
                                 <IconArrowDown size={18}/>

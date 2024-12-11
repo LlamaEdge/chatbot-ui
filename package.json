@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.2",
-    "@tabler/icons-react": "^2.9.0",
+    "@tabler/icons-react": "^2.47.0",
     "eventsource-parser": "^0.1.0",
     "i18next": "^22.4.13",
     "next": "13.2.4",
