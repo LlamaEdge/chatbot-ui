@@ -1,5 +1,5 @@
 import { FC, memo } from 'react';
-import ReactMarkdown, { Options } from 'react-markdown';
+import ReactMarkdown, {Options} from 'react-markdown';
 
 const ProcessContent = ({ children }: { children: string }) => {
     const parts = [];
@@ -65,7 +65,6 @@ const ProcessContent = ({ children }: { children: string }) => {
     return <div>{parts}</div>;
 };
 
-// eslint-disable-next-line react/display-name
 export const MemoizedReactMarkdown: FC<Options> = memo(
     ({ children, ...props }) => (
         <ProcessContent {...props}>
@@ -74,3 +73,5 @@ export const MemoizedReactMarkdown: FC<Options> = memo(
     ),
     (prevProps, nextProps) => prevProps.children === nextProps.children
 );
+
+MemoizedReactMarkdown.displayName = 'MemoizedReactMarkdown';
