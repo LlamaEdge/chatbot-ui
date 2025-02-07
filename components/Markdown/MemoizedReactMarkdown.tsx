@@ -31,7 +31,6 @@ const ProcessContent = ({ children }: { children: string }) => {
         // Regular processing for properly paired think tags
         const regex = /<think>([\s\S]*?)<\/think>/g;
         let match;
-        console.log(children)
         while ((match = regex.exec(children)) !== null) {
             // Add content before the think tag
             if (match.index > currentIndex) {
@@ -66,6 +65,7 @@ const ProcessContent = ({ children }: { children: string }) => {
     return <div>{parts}</div>;
 };
 
+// eslint-disable-next-line react/display-name
 export const MemoizedReactMarkdown: FC<Options> = memo(
     ({ children, ...props }) => (
         <ProcessContent {...props}>
