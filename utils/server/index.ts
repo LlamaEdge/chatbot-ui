@@ -39,8 +39,9 @@ export const ChatStream = async (
     }
     const res = await fetch(queryUrl, {
         headers: {
-            'accept': "application/json",
-            'Content-Type': "text/event-stream"
+            'accept': "*/*",
+            'Content-Type': "application/json",
+            Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`
         },
         method: 'POST',
         body: JSON.stringify({
@@ -64,7 +65,9 @@ export const ChatWithoutStream = async (
     let queryUrl = `${api}/v1/chat/completions`;
     const res = await fetch(queryUrl, {
         headers: {
+            'accept': "*/*",
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`
         },
         method: 'POST',
         body: JSON.stringify({
