@@ -41,7 +41,7 @@ export const ChatStream = async (
         headers: {
             'accept': "*/*",
             'Content-Type': "application/json",
-            Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`
+            Authorization: `Bearer ${key ? key : process.env.NEXT_PUBLIC_OPENAI_API_KEY}`
         },
         method: 'POST',
         body: JSON.stringify({
@@ -67,7 +67,7 @@ export const ChatWithoutStream = async (
         headers: {
             'accept': "*/*",
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`
+            Authorization: `Bearer ${key ? key : process.env.NEXT_PUBLIC_OPENAI_API_KEY}`
         },
         method: 'POST',
         body: JSON.stringify({

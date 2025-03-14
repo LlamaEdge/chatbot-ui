@@ -35,7 +35,7 @@ const useApiService = () => {
             const response = await fetch(url, {
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${params.key ? params.key : process.env.OPENAI_API_KEY}`
+                    Authorization: `Bearer ${params.key ? params.key : process.env.NEXT_PUBLIC_OPENAI_API_KEY}`
                 },
             });
             const res = await response.json()
