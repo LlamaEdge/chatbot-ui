@@ -494,7 +494,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
                                                     alignItems: "center",
                                                     justifyContent: "center"
                                                 }}>
-                                                    <img style={{height: "4rem"}} src="/llamaedge.svg"/>LlamaEdge Chat
+                                                    <img style={{height: "4rem"}} src="llamaedge.svg"/>LlamaEdge Chat
                                                 </div>
                                             )}
                                         </div>
