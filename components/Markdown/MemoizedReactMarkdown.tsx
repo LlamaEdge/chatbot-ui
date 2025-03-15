@@ -8,8 +8,6 @@ const ProcessContent = ({ children }: { children: string }) => {
     const endThinkMatch = children.match(/<\/think>/);
     if (endThinkMatch && !children.slice(0, endThinkMatch.index).includes('<think>')) {
         // If we find a lone </think>, treat all content before it as think content
-        console.log(endThinkMatch)
-        console.log(endThinkMatch.input)
         if(children.slice(0, endThinkMatch.index) && children.slice(0, endThinkMatch.index).trim() !== "") {
             if (endThinkMatch.index! > 0) {
                 parts.push(

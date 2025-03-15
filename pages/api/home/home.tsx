@@ -6,6 +6,7 @@ import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 
 import {useCreateReducer} from '@/hooks/useCreateReducer';
+import { useRouter } from 'next/router';
 import useApiService from '@/services/useApiService';
 
 import {cleanConversationHistory, cleanSelectedConversation,} from '@/utils/app/clean';
@@ -55,6 +56,7 @@ const Home = ({
               }: Props) => {
     const {t} = useTranslation('chat');
     const {getModels} = useApiService();
+    const router = useRouter();
 
     const contextValue = useCreateReducer<HomeInitialState>({
         initialState,
@@ -95,6 +97,14 @@ const Home = ({
             handleNewConversation()
         }
     },[models])
+
+
+    useEffect(() => {
+        if(router.query.api_key){
+            localStorage.setItem('apiKey', router.query.api_key as string);
+            dispatch({field: 'apiKey', value: router.query.api_key});
+        }
+    }, [router.query.api_key]);
 
     useEffect(() => {
         if (api) {
@@ -471,7 +481,7 @@ export const getStaticProps: GetStaticProps = async ({locale}) => {
 
     return {
         props: {
-            serverSideApiKeyIsSet: !!process.env.OPENAI_API_KEY,
+            serverSideApiKeyIsSet: false,
             defaultModelId,
             serverSidePluginKeysSet,
             ...(await serverSideTranslations(locale ?? 'en', [

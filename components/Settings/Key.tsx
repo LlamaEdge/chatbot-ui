@@ -16,6 +16,10 @@ export const Key: FC<Props> = ({ apiKey, onApiKeyChange }) => {
   const [newKey, setNewKey] = useState(apiKey);
   const inputRef = useRef<HTMLInputElement>(null);
 
+    useEffect(() => {
+        setNewKey(apiKey);
+    }, [apiKey]);
+
   const handleEnterDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();

@@ -61,7 +61,7 @@ export const ChatbarSettings = () => {
 
         <QueryUrl api={api} onApiChange={handleApiChange} />
 
-      {/*<Key apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />*/}
+      <Key apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />
 
       {/*{!serverSidePluginKeysSet ? <PluginKeys /> : null}*/}
 
