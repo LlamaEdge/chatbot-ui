@@ -87,7 +87,7 @@ const Home = ({
                 key: apiKey,
             },
         );
-        if (dispatch) {
+        if (dispatch && data) {
             dispatch({field: 'models', value: data});
         }
     }
