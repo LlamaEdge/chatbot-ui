@@ -100,6 +100,14 @@ const Home = ({
 
 
     useEffect(() => {
+        if(router.query.api_url){
+            localStorage.setItem('api', router.query.api_url as string);
+            dispatch({field: 'api', value: router.query.api_url});
+        }
+    }, [router.query.api_url]);
+
+
+    useEffect(() => {
         if(router.query.api_key){
             localStorage.setItem('apiKey', router.query.api_key as string);
             dispatch({field: 'apiKey', value: router.query.api_key});
