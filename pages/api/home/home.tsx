@@ -87,7 +87,7 @@ const Home = ({
                 key: apiKey,
             },
         );
-        if (dispatch && data) {
+    if (dispatch && data && (Array.isArray(data) ? data.length > 0 : Object.keys(data).length > 0)) {
             dispatch({field: 'models', value: data});
         }
     }
