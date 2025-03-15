@@ -16,6 +16,10 @@ export const QueryUrl: FC<Props> = ({api, onApiChange}) => {
     const [newKey, setNewKey] = useState(api);
     const inputRef = useRef<HTMLInputElement>(null);
 
+    useEffect(() => {
+        setNewKey(api);
+    }, [api]);
+
     const handleEnterDown = (e: KeyboardEvent<HTMLDivElement>) => {
         if (e.key === 'Enter') {
             e.preventDefault();
