@@ -115,9 +115,7 @@ const Home = ({
     }, [router.query.api_key]);
 
     useEffect(() => {
-        if (api) {
             getData()
-        }
     }, [api, apiKey])
 
     // FETCH MODELS ----------------------------------------------

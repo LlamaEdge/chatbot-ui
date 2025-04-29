@@ -30,7 +30,7 @@ const useApiService = () => {
     // );
 
     const getModels = async (params: GetModelsRequestProps) => {
-        if(params.url){
+        // if(params.url){
             let url = `${params.url}/v1/models`;
             try {
                 const response = await fetch(url, {
@@ -61,7 +61,7 @@ const useApiService = () => {
             } catch (e) {
                 return {}
             }
-        }
+        // }
     }
 
     return {
