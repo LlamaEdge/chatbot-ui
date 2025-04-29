@@ -453,23 +453,7 @@ export const Chat = memo(({stopConversationRef}: Props) => {
 
         return (
             <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#343541]">
-                {!(apiKey || api) ? (
-                    <div className="mx-auto flex h-full w-[300px] flex-col justify-center space-y-6 sm:w-[600px]">
-                        <div className="text-center text-4xl font-bold text-black dark:text-white">
-                            Welcome to LlamaEdge Chat
-                        </div>
-                        <div className="text-center text-gray-500 dark:text-gray-400">
-                            <div className="mb-2">
-                                LlamaEdge Chat allows you to plug in your API key to use this UI with
-                                their API.
-                            </div>
-                            <div className="mb-2">
-                                It is <span className="italic">only</span> used to communicate
-                                with their API.
-                            </div>
-                        </div>
-                    </div>
-                ) : modelError ? (
+                {modelError ? (
                     <ErrorMessageDiv error={modelError}/>
                 ) : (
                     <>
